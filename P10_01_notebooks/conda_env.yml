@@ -7,9 +7,7 @@ dependencies:
   - notebook
   - pip:
     - azureml-defaults
-    - azureml-widgets
-    - azureml-train-core
-    - azureml-pipeline
+    - azure-cognitiveservices-language-luis
     - numpy
     - pandas
     - scipy
@@ -18,9 +16,3 @@ dependencies:
     - python-dotenv
     - joblib
     - tqdm
-    - scikit-learn
-    - scikit-surprise
-    - pyodbc
-    - SQLAlchemy
-    - jupyter_contrib_nbextensions
-    - python-dotenv
