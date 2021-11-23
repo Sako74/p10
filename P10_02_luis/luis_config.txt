@@ -1,0 +1,6 @@
+LUIS_RG="p10-luis-rg"
+LUIS_AUTH_NAME="p10-luis-auth"
+LUIS_PRED_NAME="p10-luis-pred"
+LUIS_LOC="westus"
+LUIS_SKU="F0"
+LUIS_ENV_FILE_NAME=".env"

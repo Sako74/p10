@@ -1,9 +1,8 @@
 # On importe les configuration
-source chatbot_config.txt
+source "P10_02_luis/luis_config.txt"
 
-################################################################################
-# Suppression des ressources LUIS
-################################################################################
+# On crée le chemin vers le fichier qui va contenir les varaibles d'environnement
+LUIS_ENV_FILE_PATH = "P10_02_luis/$LUIS_ENV_FILE_NAME"
 
 # Définition des variables
 SUBSCRIPTION_ID=`az account show --query id --output tsv`
@@ -13,16 +12,9 @@ LUIS_PRED_ID="/subscriptions/$SUBSCRIPTION_ID/providers/Microsoft.CognitiveServi
 # Suppression du groupe
 az group delete --name $LUIS_RG --yes
 
-# Suppression "hard" du service cognitif (https://stackoverflow.com/a/67938295)
+# Suppression "hard" des services LUIS (https://stackoverflow.com/a/67938295)
 az resource delete --ids $LUIS_AUTH_ID
 az resource delete --ids $LUIS_PRED_ID
 
 # Suppression des infos de connexion
-rm $LUIS_ENV_FILE_NAME
-
-################################################################################
-# Suppression des ressources du chatbot
-################################################################################
-
-# On supprime le groupe de ressources du chatbot
-az group delete --name $RESOURCEGROUP --yes
+rm $LUIS_ENV_FILE_PATH
