@@ -1,0 +1,38 @@
+name: Create infrastructure
+
+on:
+  workflow_dispatch:
+
+env:
+  PYTHON_VERSION: '3.8.8'
+
+jobs:
+  infra_create:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout GitHub Action
+      uses: actions/checkout@v2
+      
+    - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+        
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+        
+    - name: Create LUIS ressources
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          chmod +x $GITHUB_WORKSPACE/P10_02_luis/create.sh
+          $GITHUB_WORKSPACE/P10_02_luis/create.sh
+        
+    - name: Create chatbot ressources
+      uses: azure/CLI@v1
+      with:
+        inlineScript: |
+          chmod +x $GITHUB_WORKSPACE/P10_03_chatbot/create.sh
+          $GITHUB_WORKSPACE/P10_03_chatbot/create.sh
