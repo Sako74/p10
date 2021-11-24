@@ -40,7 +40,8 @@ CHATBOT_APP_INSIGHTS_KEY=$(az monitor app-insights component show -g $CHATBOT_RG
 ################################################################################
 
 # On génère un mot de passe aléatoire
-CHATBOT_BOT_PASSWORD=$(uuidgen)
+# CHATBOT_BOT_PASSWORD=$(uuidgen)
+CHATBOT_BOT_PASSWORD=`python -c "import uuid; print(uuid.uuid1(), end=None)"`
 
 # On génère une azure application et on récupère son id
 CHATBOT_BOT_ID=$(az ad app create --display-name $CHATBOT_BOT_NAME --password $CHATBOT_BOT_PASSWORD --available-to-other-tenants --query "appId" -o tsv | tr -d '[ \t\n\r\f\v]')
