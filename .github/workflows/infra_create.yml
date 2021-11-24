@@ -33,7 +33,7 @@ jobs:
     - name: Create LUIS app
       shell: bash
       run: |
-        sudo P10_01_scripts/luis_app_create.sh
+        sudo ./P10_01_scripts/luis_app_create.sh
         
     - name: Create chatbot ressources
       uses: azure/CLI@v1
