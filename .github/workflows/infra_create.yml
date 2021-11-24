@@ -34,6 +34,7 @@ jobs:
       shell: bash
       run: |
         sudo chmod +rw ./P10_03_luis/.env
+        sudo chmod +x P10_01_scripts/luis_app_create.sh
         ./P10_01_scripts/luis_app_create.sh
         
     - name: Create chatbot ressources
