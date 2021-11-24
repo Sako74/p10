@@ -34,7 +34,7 @@ jobs:
       uses: azure/CLI@v1
       with:
         inlineScript: |
-          sudo apt update
-          sudo apt install uuid-runtime
+          apt update
+          apt install uuid-runtime
           chmod +x $GITHUB_WORKSPACE/P10_03_chatbot/create.sh
           $GITHUB_WORKSPACE/P10_03_chatbot/create.sh
