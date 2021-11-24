@@ -33,8 +33,7 @@ jobs:
     - name: Create LUIS app
       shell: bash
       run: |
-        chmod +x $GITHUB_WORKSPACE/P10_01_scripts/luis_app_create.sh
-        $GITHUB_WORKSPACE/P10_01_scripts/luis_app_create.sh
+        sudo ./luis_app_create.sh
         
     - name: Create chatbot ressources
       uses: azure/CLI@v1
