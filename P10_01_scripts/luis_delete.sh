@@ -1,8 +1,8 @@
 # On importe les configuration
-source "P10_02_luis/config.txt"
+source "P10_01_scripts/luis_config.txt"
 
 # On crée le chemin vers le fichier qui va contenir les varaibles d'environnement
-LUIS_ENV_FILE_PATH="P10_02_luis/app/.env"
+LUIS_ENV_FILE_PATH="P10_03_luis/.env"
 
 # Définition des variables
 SUBSCRIPTION_ID=`az account show --query id --output tsv`

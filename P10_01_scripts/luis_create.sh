@@ -1,8 +1,8 @@
 # On importe les configuration
-source "P10_02_luis/config.txt"
+source "P10_01_scripts/luis_config.txt"
 
 # On crée le chemin vers le fichier qui va contenir les varaibles d'environnement
-LUIS_ENV_FILE_PATH="P10_02_luis/app/.env"
+LUIS_ENV_FILE_PATH="P10_03_luis/.env"
 
 ################################################################################
 # Création des ressources LUIS
@@ -30,13 +30,3 @@ echo LUIS_AUTH_ENDPOINT=$LUIS_AUTH_ENDPOINT >> $LUIS_ENV_FILE_PATH
 
 echo LUIS_PRED_KEY=$LUIS_PRED_KEY >> $LUIS_ENV_FILE_PATH
 echo LUIS_PRED_ENDPOINT=$LUIS_PRED_ENDPOINT >> $LUIS_ENV_FILE_PATH
-
-################################################################################
-# Création de l'application LUIS
-################################################################################
-
-# On crée l'application LUIS
-LUIS_APP_ID=$(python -m "P10_02_luis.app.create")
-
-# On enregistrer l'id de l'application
-echo LUIS_APP_ID=$LUIS_APP_ID >> $LUIS_ENV_FILE_PATH

@@ -1,5 +1,5 @@
 # On importe les configuration
-source "P10_03_chatbot/config.txt"
+source "P10_01_scripts/chatbot_config.txt"
 
 # On supprime le groupe de ressources du chatbot
 az group delete --name $CHATBOT_RG --yes

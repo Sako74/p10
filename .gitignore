@@ -4,9 +4,10 @@
 .vscode
 .amlignore
 __pycache__
-P10_01_notebooks/data/*
-!P10_01_notebooks/data/img/
+P10_02_notebooks/data/*
+!P10_02_notebooks/data/img/
 outputs
+tmp
 *.ipynb
 !*_no_out.ipynb
 *.amltmp

@@ -1,15 +1,15 @@
 # On importe les configurations du chatbot
-source "P10_03_chatbot/config.txt"
+source "P10_01_scripts/chatbot_config.txt"
 
 # On importe les variables d'environnement de LUIS
-source "P10_02_luis/app/.env"
+source "P10_03_luis/.env"
 
 ################################################################################
 # Création et déploiement de l'application web
 ################################################################################
 
 # On se positionne dans le dossier de l'application web
-pushd "P10_03_chatbot/app/"
+pushd "P10_04_chatbot/"
 
 # On crée les réssources et on déploie les fichiers présent dans le dossier de l'application web
 az webapp up -g $CHATBOT_RG -n $CHATBOT_APP_SITE_NAME -l $CHATBOT_APP_LOC --plan $CHATBOT_APP_PLAN_NAME --runtime $CHATBOT_APP_RUNTIME --sku $CHATBOT_APP_SKU
