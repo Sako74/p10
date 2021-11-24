@@ -27,14 +27,17 @@ jobs:
       uses: azure/CLI@v1
       with:
         inlineScript: |
-          chmod +x $GITHUB_WORKSPACE/P10_02_luis/create.sh
-          $GITHUB_WORKSPACE/P10_02_luis/create.sh
+          chmod +x $GITHUB_WORKSPACE/P10_01_scripts/luis_create.sh
+          $GITHUB_WORKSPACE/P10_01_scripts/luis_create.sh
+        
+    - name: Create LUIS app
+      shell: bash
+      run: |
+        ./P10_01_scripts/luis_app_create.sh
         
     - name: Create chatbot ressources
       uses: azure/CLI@v1
       with:
         inlineScript: |
-          apt update
-          apt install uuid-runtime
-          chmod +x $GITHUB_WORKSPACE/P10_03_chatbot/create.sh
-          $GITHUB_WORKSPACE/P10_03_chatbot/create.sh
+          chmod +x $GITHUB_WORKSPACE/P10_01_scripts/chatbot_create.sh
+          $GITHUB_WORKSPACE/P10_01_scripts/chatbot_create.sh
