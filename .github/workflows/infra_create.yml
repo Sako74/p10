@@ -27,7 +27,7 @@ jobs:
       uses: azure/CLI@v1
       with:
         inlineScript: |
-          chmod +x $GITHUB_WORKSPACE/P10_01_scripts/luis_create.sh
+          sudo chmod +x $GITHUB_WORKSPACE/P10_01_scripts/luis_create.sh
           $GITHUB_WORKSPACE/P10_01_scripts/luis_create.sh
         
     - name: Create LUIS app
