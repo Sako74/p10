@@ -8,6 +8,7 @@ P10_02_notebooks/data/*
 !P10_02_notebooks/data/img/
 outputs
 tmp
+venv
 *.ipynb
 !*_no_out.ipynb
 *.amltmp
