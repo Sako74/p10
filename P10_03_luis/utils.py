@@ -2,6 +2,9 @@
 # +
 import os, json, time, requests
 
+from azureml.core import Workspace
+from azureml.core.authentication import ServicePrincipalAuthentication
+
 from azure.cognitiveservices.language.luis.authoring import LUISAuthoringClient
 from azure.cognitiveservices.language.luis.authoring.models import ApplicationCreateObject, AzureAccountInfoObject, LuisApp
 from azure.cognitiveservices.language.luis.runtime import LUISRuntimeClient
@@ -28,6 +31,49 @@ LUIS_APP_ID = os.getenv("LUIS_APP_ID")
 
 # -
 
+def get_ws(azure_credentials: dict, azure_workspace: dict) -> Workspace:
+    """Renvoie le workspace de Azure ML.
+    
+    Parameters
+    ----------
+        azure_credentials : dict
+            Informations de connexion.
+        azure_workspace : dict
+            Informations sur le workspace.
+
+    Returns
+    ----------
+        Azure Workspace
+            Workspace de Azure ML.
+    """
+    
+    # On crée un service d'authentification
+    svc_pr = ServicePrincipalAuthentication(
+        tenant_id=azure_credentials.get("tenantId"),
+        service_principal_id=azure_credentials.get("clientId"),
+        service_principal_password=azure_credentials.get("clientSecret")
+    )
+
+    # On se connecte au workspace
+    ws = Workspace(
+        subscription_id=azure_credentials.get("subscriptionId"),
+        resource_group=azure_workspace.get("resourceGroup"),
+        workspace_name=azure_workspace.get("workspaceName"),
+        auth=svc_pr
+    )
+
+    return ws
+
+
+def check_response_ok_or_raise_for_status(response):
+    """Vérifie que la réponse est ok ou génère une erreur"""
+    
+    # On génère une exception en cas d'erreur
+    if not response.ok:
+        print(response.content)
+        response.raise_for_status()
+
+
 def create_new_version(app_version: str, app_params: dict, app_utterances: list=[]):
     """Crée un nouvelle version d'una application LUIS"""
     
@@ -47,8 +93,8 @@ def create_new_version(app_version: str, app_params: dict, app_utterances: list=
         json=app_params_tmp
     )
     
-    # On génère une exception en cas d'erreur
-    response.raise_for_status()
+    # On vérifie la réponse
+    check_response_ok_or_raise_for_status(response)
 
 
 def train(app_version: str, check_status_period: int=10):
@@ -87,10 +133,8 @@ def get_params(app_version: str) -> dict:
         }
     )
     
-    # On génère une exception en cas d'erreur
-    if not response.ok:
-        print(response.content)
-        response.raise_for_status()
+    # On vérifie la réponse
+    check_response_ok_or_raise_for_status(response)
     
     # On renvoie les paramètres
     return response.json()
@@ -150,10 +194,8 @@ def evaluate(is_staging: bool, utterances: list, check_status_period: int=10) ->
         json=utterances
     )
     
-    # On génère une exception en cas d'erreur
-    if not response.ok:
-        print(response.content)
-        response.raise_for_status()
+    # On vérifie la réponse
+    check_response_ok_or_raise_for_status(response)
     
     # On récupère l'id de l'opération
     operation_id = response.json()["operationId"]
@@ -185,10 +227,8 @@ def evaluate(is_staging: bool, utterances: list, check_status_period: int=10) ->
         }
     )
     
-    # On génère une exception en cas d'erreur
-    if not response.ok:
-        print(response.content)
-        response.raise_for_status()
+    # On vérifie la réponse
+    check_response_ok_or_raise_for_status(response)
     
     # On récupère les résultats
     res = response.json()
