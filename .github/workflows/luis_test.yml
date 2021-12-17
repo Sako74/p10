@@ -16,11 +16,11 @@ jobs:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v2
     - name: 'Create LUIS env file'
+      env:
+        LUIS_ENV: ${{ secrets.LUIS_ENV }}
       shell: bash
       run: |
-        touch '${{ env.LUIS_PATH }}/.env'
-        echo ${{ secrets.LUIS_ENV }} >> '${{ env.LUIS_PATH }}/.env'
-        cat '${{ env.LUIS_PATH }}/.env'
+        echo ${{ env.LUIS_ENV }} > '${{ env.LUIS_PATH }}/.env'
     - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
       uses: actions/setup-python@v2
       with:
