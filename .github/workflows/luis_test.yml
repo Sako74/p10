@@ -6,7 +6,6 @@ on:
 env:
   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
   AZURE_WORKSPACE: ${{ secrets.AZURE_WORKSPACE }}
-  LUIS_ENV: ${{ secrets.LUIS_ENV }}
   LUIS_PATH: 'P10_03_luis'
   PYTHON_VERSION: '3.8.8'
 
@@ -19,8 +18,12 @@ jobs:
     - name: 'Create LUIS env file'
       shell: bash
       run: |
-        echo ${{ env.LUIS_ENV }} > '${{ env.LUIS_PATH }}/.env'
-        tail '${{ env.LUIS_PATH }}/.env'
+        echo ${{ secrets.LUIS_ENV }} > '${{ env.LUIS_PATH }}/.env'
+    - name: 'Create LUIS env file'
+      shell: bash
+      run: |
+        ls '${{ env.LUIS_PATH }}/.env'
+        echo `cat P10_03_luis/.env`
     - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
       uses: actions/setup-python@v2
       with:
