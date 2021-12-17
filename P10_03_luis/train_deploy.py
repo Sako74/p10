@@ -21,20 +21,7 @@ if __name__ == "__main__":
     
     print("Chargement des variables d'environement.")
     
-    print("os.listdir():", os.listdir())
-    
-    with open(".env") as f:
-        print("f.read()", f.read())
-    
     get_env(".env")
-
-    print("LUIS_AUTH_KEY:", LUIS_AUTH_KEY)
-    print("LUIS_AUTH_ENDPOINT:", LUIS_AUTH_ENDPOINT)
-    
-    print("LUIS_PRED_KEY:", LUIS_PRED_KEY)
-    print("LUIS_PRED_ENDPOINT:", LUIS_PRED_ENDPOINT)
-    
-    print("LUIS_APP_ID:", LUIS_APP_ID)
     
     print("Chargement du workspace.")
     
@@ -76,7 +63,9 @@ if __name__ == "__main__":
     
     create_new_version(app_version, params["model"], utterances_train)
     
-    print("Entrainement du modèle.")
+    ds_name = params["dataset"]["name"]
+    ds_version = params["dataset"]["version"]
+    print(f"Entrainement du modèle avec le dataset {ds_name} v{ds_version}.")
     
     train(app_version)
     
@@ -85,7 +74,7 @@ if __name__ == "__main__":
     
     deploy(app_version, args.is_staging)
     
-    print("Evaluation du modèle.")
+    print(f"Evaluation du modèle avec le dataset {ds_name} v{ds_version}.")
     
     res = evaluate(args.is_staging, utterances_test)
     
