@@ -20,7 +20,7 @@ jobs:
       shell: bash
       run: |
         echo ${{ env.LUIS_ENV }} > '${{ env.LUIS_PATH }}/.env'
-        cat '${{ env.LUIS_PATH }}/.env'
+        tail '${{ env.LUIS_PATH }}/.env'
     - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
       uses: actions/setup-python@v2
       with:
