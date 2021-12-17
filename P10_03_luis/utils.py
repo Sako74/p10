@@ -31,6 +31,22 @@ LUIS_APP_ID = os.getenv("LUIS_APP_ID")
 
 # -
 
+def get_env(env_file_path: str):
+    """On charge les variables d'environnement"""
+    
+    # On charge le fichier des variables d'environnement
+    load_dotenv(env_file_path, override=True)
+    
+    # On charge les variables d'environnement
+    LUIS_AUTH_KEY = os.getenv("LUIS_AUTH_KEY")
+    LUIS_AUTH_ENDPOINT = os.getenv("LUIS_AUTH_ENDPOINT")
+
+    LUIS_PRED_KEY = os.getenv("LUIS_PRED_KEY")
+    LUIS_PRED_ENDPOINT = os.getenv("LUIS_PRED_ENDPOINT")
+
+    LUIS_APP_ID = os.getenv("LUIS_APP_ID")
+
+
 def get_ws(azure_credentials: dict, azure_workspace: dict) -> Workspace:
     """Renvoie le workspace de Azure ML.
     

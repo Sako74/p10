@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 import json
 import tempfile
@@ -17,6 +18,10 @@ if __name__ == "__main__":
     parser.add_argument("--is_tmp", type=int, default=1)
     
     args = parser.parse_args()
+    
+    print("Chargement des variables d'environement.")
+    
+    get_env(".env")
     
     print("Chargement du workspace.")
     
