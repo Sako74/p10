@@ -18,12 +18,9 @@ jobs:
     - name: 'Create LUIS env file'
       shell: bash
       run: |
-        echo ${{ secrets.LUIS_ENV }} > '${{ env.LUIS_PATH }}/.env'
-    - name: 'Create LUIS env file'
-      shell: bash
-      run: |
-        ls '${{ env.LUIS_PATH }}/.env'
-        echo `cat P10_03_luis/.env`
+        touch '${{ env.LUIS_PATH }}/.env'
+        echo ${{ secrets.LUIS_ENV }} >> '${{ env.LUIS_PATH }}/.env'
+        cat '${{ env.LUIS_PATH }}/.env'
     - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
       uses: actions/setup-python@v2
       with:
