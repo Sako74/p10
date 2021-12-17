@@ -40,6 +40,10 @@ if __name__ == "__main__":
     with open("params.json") as f:
         params = json.load(f)
         
+    model_version = str(params["model"]["versionId"])
+    ds_name = params["dataset"]["name"]
+    ds_version = params["dataset"]["version"]
+        
     print("Chargement des jeux de données.")
     
     with tempfile.TemporaryDirectory() as tmp_dir_name:
@@ -57,14 +61,12 @@ if __name__ == "__main__":
             utterances_test = json.load(f)
     
     # On crée le nom de version du modèle
-    app_version = args.app_version if args.app_version else str(params["model"]["versionId"])
+    app_version = args.app_version if args.app_version else f"{model_version}.{ds_version}"
     
     print(f"Création de la version {app_version}.")
     
     create_new_version(app_version, params["model"], utterances_train)
     
-    ds_name = params["dataset"]["name"]
-    ds_version = params["dataset"]["version"]
     print(f"Entrainement du modèle avec le dataset {ds_name} v{ds_version}.")
     
     train(app_version)
