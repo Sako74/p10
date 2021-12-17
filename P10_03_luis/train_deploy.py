@@ -21,6 +21,11 @@ if __name__ == "__main__":
     
     print("Chargement des variables d'environement.")
     
+    print("os.listdir():", os.listdir())
+    
+    with open(".env") as f:
+        print("f.read()", f.read())
+    
     get_env(".env")
 
     print("LUIS_AUTH_KEY:", LUIS_AUTH_KEY)
