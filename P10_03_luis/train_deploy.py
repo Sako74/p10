@@ -61,7 +61,7 @@ if __name__ == "__main__":
             utterances_test = json.load(f)
     
     # On crée le nom de version du modèle
-    app_version = args.app_version if args.app_version else f"{model_version}.{ds_version}"
+    app_version = args.app_version if args.app_version else f"{model_version}.{ds_name}.{ds_version}"
     
     print(f"Création de la version {app_version}.")
     
