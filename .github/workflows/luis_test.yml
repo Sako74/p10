@@ -16,6 +16,11 @@ jobs:
     steps:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v2
+    - name: 'Create LUIS env file'
+      shell: bash
+      run: |
+        echo ${{ env.LUIS_ENV }} > '${{ env.LUIS_PATH }}/.env'
+        cat '${{ env.LUIS_PATH }}/.env'
     - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
       uses: actions/setup-python@v2
       with:
@@ -24,10 +29,6 @@ jobs:
       shell: bash
       run: |
         $CONDA/bin/conda env update --file '${{ env.LUIS_PATH }}/conda_env.yml' --name base
-    - name: 'Create LUIS env file'
-      shell: bash
-      run: |
-        echo ${{ env.LUIS_ENV }} > '${{ env.LUIS_PATH }}/.env'
     - name: 'Create, train, deploy, test and delete model'
       shell: bash
       run: |
