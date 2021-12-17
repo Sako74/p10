@@ -22,6 +22,14 @@ if __name__ == "__main__":
     print("Chargement des variables d'environement.")
     
     get_env(".env")
+
+    print("LUIS_AUTH_KEY:", LUIS_AUTH_KEY)
+    print("LUIS_AUTH_ENDPOINT:", LUIS_AUTH_ENDPOINT)
+    
+    print("LUIS_PRED_KEY:", LUIS_PRED_KEY)
+    print("LUIS_PRED_ENDPOINT:", LUIS_PRED_ENDPOINT)
+    
+    print("LUIS_APP_ID:", LUIS_APP_ID)
     
     print("Chargement du workspace.")
     
