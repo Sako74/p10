@@ -6,6 +6,5 @@ datatypes-date-time
 botbuilder-dialogs
 botbuilder-ai
 botbuilder-testing
-#asyncio
 aiohttp
 python-dotenv
