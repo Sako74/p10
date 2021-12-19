@@ -9,7 +9,7 @@ env:
   PYTHON_VERSION: '3.8.8'
 
 jobs:
-  deploy:
+  test:
     runs-on: ubuntu-latest
     steps:
     - name: 'Checkout GitHub Action'
@@ -29,7 +29,7 @@ jobs:
       run: |
         pushd './${{ env.FUNCTION_PATH }}'
         python -m pip install --upgrade pip
-        pip install -r requirements.txt --target=".python_packages/lib/site-packages"
+        pip install -r requirements.txt
         popd
     - name: 'Test Azure function'
       shell: bash
