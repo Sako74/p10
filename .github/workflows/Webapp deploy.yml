@@ -1,0 +1,23 @@
+name: Webapp deploy
+
+on:
+  workflow_dispatch:
+
+env:
+  AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
+  AZURE_WORKSPACE: ${{ secrets.AZURE_WORKSPACE }}
+  SCRIPT_PATH: '$GITHUB_WORKSPACE/P10_01_scripts/chatbot_deploy.sh'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@v2
+    - name: 'Deploy on production'
+      uses: azure/CLI@v1
+      with:
+        azcliversion: 2.30.0
+        inlineScript: |
+          chmod +x ${{ env.SCRIPT_PATH }}
+          ${{ env.SCRIPT_PATH }}
