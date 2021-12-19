@@ -1,3 +1,3 @@
-# MVP of the reservation bot
+# Live demo
 
-Link to the MVP of the reservation bot: [MVP](https://sako74.github.io/p10/)
+Follow this link to test the MVP of the reservation bot: [live demo](https://sako74.github.io/p10/)
