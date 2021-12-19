@@ -2,6 +2,6 @@
 # Licensed under the MIT License.
 """Helpers module."""
 
-from . import activity_helper, luis_helper, dialog_helper
+from . import luis_helper, dialog_helper
 
-__all__ = ["activity_helper", "dialog_helper", "luis_helper"]
+__all__ = ["dialog_helper", "luis_helper"]
