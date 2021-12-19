@@ -5,7 +5,6 @@ on:
 
 env:
   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-  AZURE_WORKSPACE: ${{ secrets.AZURE_WORKSPACE }}
   SCRIPT_PATH: '$GITHUB_WORKSPACE/P10_01_scripts/chatbot_deploy.sh'
 
 jobs:
@@ -14,6 +13,10 @@ jobs:
     steps:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v2
+    - name: 'Azure Login'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
     - name: 'Deploy on production'
       uses: azure/CLI@v1
       with:
