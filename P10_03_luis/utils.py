@@ -12,11 +12,7 @@ from msrest.authentication import CognitiveServicesCredentials
 
 import pandas as pd
 
-from dotenv import load_dotenv, set_key
-# -
-
-# On charge le fichier des variables d'environnement
-load_dotenv("../P10_03_luis/.env", override=True)
+from dotenv import load_dotenv
 
 # +
 # On charge les variables d'environnement
@@ -30,6 +26,12 @@ LUIS_APP_ID = os.getenv("LUIS_APP_ID")
 
 
 # -
+
+def pprint_dict(data: dict):
+    """Affiche un dictionnaire en indentant ses sous-éléments."""
+    
+    print(json.dumps(data, indent=2))
+
 
 def get_env(env_file_path: str):
     """On charge les variables d'environnement"""
