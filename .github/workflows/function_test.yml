@@ -1,0 +1,39 @@
+name: Function test
+
+on:
+  workflow_dispatch:
+
+env:
+  FUNCTION_PATH: 'P10_05_functions'
+  FUNCTION_NAME: 'create_github_issue'
+  PYTHON_VERSION: '3.8.8'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+    - name: 'Checkout GitHub Action'
+      uses: actions/checkout@v2
+    - name: Setup Python ${{ env.PYTHON_VERSION }} Environment
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ env.PYTHON_VERSION }}
+    - name: 'Create Function env file'
+      env:
+        FUNCTION_ENV: ${{ secrets.FUNCTION_ENV }}
+      shell: bash
+      run: |
+        $CONDA/bin/python -c "import os; f = open('${{ env.FUNCTION_PATH }}/${{ env.FUNCTION_NAME }}/.env', 'w+'); f.write(os.getenv('FUNCTION_ENV')); f.close()"
+    - name: 'Resolve Project Dependencies Using Pip'
+      shell: bash
+      run: |
+        pushd './${{ env.FUNCTION_PATH }}'
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt --target=".python_packages/lib/site-packages"
+        popd
+    - name: 'Test Azure function'
+      shell: bash
+      run: |
+        pushd './${{ env.FUNCTION_PATH }}'
+        python -m unittest -v
+        popd
