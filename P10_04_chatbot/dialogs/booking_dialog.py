@@ -43,7 +43,18 @@ class BookingDialog(CancelAndHelpDialog):
         self.add_dialog(text_prompt)
         self.add_dialog(ConfirmPrompt(ConfirmPrompt.__name__))
         self.add_dialog(
-            DateResolverDialog(DateResolverDialog.__name__, self.telemetry_client)
+            DateResolverDialog(
+                DateResolverDialog.__name__ + "_from_dt",
+                self.telemetry_client,
+                "When do you want to leave?"
+            )
+        )
+        self.add_dialog(
+            DateResolverDialog(
+                DateResolverDialog.__name__ + "_to_dt",
+                self.telemetry_client,
+                "When do you want to come back?"
+            )
         )
         self.add_dialog(waterfall_dialog)
 
@@ -95,7 +106,7 @@ class BookingDialog(CancelAndHelpDialog):
 
         if not booking_details.from_dt:
             return await step_context.begin_dialog(
-                DateResolverDialog.__name__, booking_details.from_dt
+                DateResolverDialog.__name__ + "_from_dt", booking_details.from_dt
             )
 
         return await step_context.next(booking_details.from_dt)
@@ -113,7 +124,7 @@ class BookingDialog(CancelAndHelpDialog):
 
         if not booking_details.to_dt:
             return await step_context.begin_dialog(
-                DateResolverDialog.__name__, booking_details.to_dt
+                DateResolverDialog.__name__ + "_to_dt", booking_details.to_dt
             )
 
         return await step_context.next(booking_details.to_dt)

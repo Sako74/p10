@@ -22,6 +22,7 @@ class DateResolverDialog(CancelAndHelpDialog):
         self,
         dialog_id: str = None,
         telemetry_client: BotTelemetryClient = NullTelemetryClient(),
+        prompt_msg: str = "On what date would you like to travel?"
     ):
         super(DateResolverDialog, self).__init__(
             dialog_id or DateResolverDialog.__name__, telemetry_client
@@ -43,24 +44,25 @@ class DateResolverDialog(CancelAndHelpDialog):
 
         self.initial_dialog_id = WaterfallDialog.__name__ + "2"
 
+        self.prompt_msg = prompt_msg
+
     async def initial_step(
         self, step_context: WaterfallStepContext
     ) -> DialogTurnResult:
         """Prompt for the date."""
         timex = step_context.options
 
-        prompt_msg = "On what date would you like to travel?"
         reprompt_msg = (
             "I'm sorry, for best results, please enter your travel "
             "date including the month, day and year."
         )
 
-        if timex is None:
+        if not timex:
             # We were not given any date at all so prompt the user.
             return await step_context.prompt(
                 DateTimePrompt.__name__,
                 PromptOptions(  # pylint: disable=bad-continuation
-                    prompt=MessageFactory.text(prompt_msg),
+                    prompt=MessageFactory.text(self.prompt_msg),
                     retry_prompt=MessageFactory.text(reprompt_msg),
                 ),
             )
