@@ -5,7 +5,7 @@ botbuilder-integration-applicationinsights-aiohttp
 datatypes-date-time
 botbuilder-dialogs
 botbuilder-ai
-pip install botbuilder-testing
+botbuilder-testing
 asyncio
 aiohttp
 python-dotenv
