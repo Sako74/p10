@@ -24,6 +24,13 @@ jobs:
       shell: bash
       run: |
         $CONDA/bin/python -c "import os; f = open('${{ env.FUNCTION_PATH }}/${{ env.FUNCTION_NAME }}/.env', 'w+'); f.write(os.getenv('FUNCTION_ENV')); f.close()"
+    - name: 'Resolve Project Dependencies Using Pip'
+      shell: bash
+      run: |
+        pushd './${{ env.FUNCTION_PATH }}'
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt --target=".python_packages/lib/site-packages"
+        popd
     - name: 'Run Azure Functions Action'
       uses: Azure/functions-action@v1
       id: fa
