@@ -1,8 +1,8 @@
 # On importe les configuration
-source "P10_01_scripts/luis_config.txt"
+source "luis_config.txt"
 
 # On crée le chemin vers le fichier qui va contenir les varaibles d'environnement
-LUIS_ENV_FILE_PATH="P10_03_luis/.env"
+LUIS_ENV_FILE_PATH=".env"
 
 ################################################################################
 # Création des ressources LUIS
@@ -35,8 +35,17 @@ echo LUIS_PRED_ENDPOINT=$LUIS_PRED_ENDPOINT >> $LUIS_ENV_FILE_PATH
 # Création de l'application LUIS
 ################################################################################
 
-# On crée l'application LUIS
-LUIS_APP_ID=$(python -m "P10_03_luis.create")
+# On charge les paramètres du modèle LUIS
+LUIS_PARAMS=`python -c "import json; f = open('params.json'); params = json.load(f); print(json.dumps(params['model'])); f.close();"`
 
-# On enregistrer l'id de l'application
+# On crée une application LUIS
+LUIS_APP_ID=`curl -v -X POST "https://westus.api.cognitive.microsoft.com/luis/authoring/v3.0-preview/apps/import" \
+-H "Content-Type: application/json" \
+-H "Ocp-Apim-Subscription-Key: $LUIS_AUTH_KEY" \
+--data-ascii "$LUIS_PARAMS"`
+
+# On enregistre l'id de l'application
 echo LUIS_APP_ID=$LUIS_APP_ID >> $LUIS_ENV_FILE_PATH
+
+echo "Créer un secret Github avec la clé LUIS_ENV et la valeur suivante :"
+cat $LUIS_ENV_FILE_PATH

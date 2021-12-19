@@ -1,0 +1,10 @@
+botbuilder-core
+botbuilder-applicationinsights
+botbuilder-integration-aiohttp
+botbuilder-integration-applicationinsights-aiohttp
+datatypes-date-time
+botbuilder-dialogs
+botbuilder-ai
+botbuilder-testing
+aiohttp
+python-dotenv

@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  WEBAPP_PATH: 'P10_04_chatbot'
+  WEBAPP_PATH: 'P10_03_chatbot/webapp'
   PYTHON_VERSION: '3.8.8'
 
 jobs:

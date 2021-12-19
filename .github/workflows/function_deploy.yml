@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 env:
-  FUNCTION_PATH: 'P10_05_functions'
+  FUNCTION_PATH: 'P10_04_functions'
   FUNCTION_NAME: 'create_github_issue'
   PYTHON_VERSION: '3.8.8'
 

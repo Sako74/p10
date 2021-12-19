@@ -1,0 +1,4 @@
+FUNCTION_RG="p10-function-rg"
+FUNCTION_STORAGE=""p10functionstorage"
+FUNCTION_NAME=""p10-function"
+FUNCTION_LOC="northeurope"

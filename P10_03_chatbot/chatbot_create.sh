@@ -1,15 +1,18 @@
 # On importe les configurations du chatbot
-source "P10_01_scripts/chatbot_config.txt"
+source "chatbot_config.txt"
 
 # On importe les variables d'environnement de LUIS
-source "P10_03_luis/.env"
+source "../P10_02_luis/.env"
+
+# On crée le chemin vers le fichier qui va contenir les varaibles d'environnement
+CHATBOT_ENV_FILE_PATH="webapp/.env"
 
 ################################################################################
 # Création et déploiement de l'application web
 ################################################################################
 
 # On se positionne dans le dossier de l'application web
-pushd "P10_04_chatbot/"
+pushd "webapp/"
 
 # On crée les réssources et on déploie les fichiers présent dans le dossier de l'application web
 az webapp up -g $CHATBOT_RG -n $CHATBOT_APP_SITE_NAME -l $CHATBOT_APP_LOC --plan $CHATBOT_APP_PLAN_NAME --runtime $CHATBOT_APP_RUNTIME --sku $CHATBOT_APP_SKU
@@ -64,3 +67,9 @@ az webapp config appsettings set -g $CHATBOT_RG -n $CHATBOT_APP_SITE_NAME --sett
 
 # On redémarre l'application web
 az webapp restart -g $CHATBOT_RG -n $CHATBOT_APP_SITE_NAME
+
+# On enregistrer les variables d'environnement
+az webapp config appsettings list -g $CHATBOT_RG -n $CHATBOT_APP_SITE_NAME --query "[].[name, value]" -o tsv | tr '\t' '=' > $CHATBOT_ENV_FILE_PATH
+
+echo "Créer un secret Github avec la clé WEBAPP_ENV et la valeur suivante :"
+cat $CHATBOT_ENV_FILE_PATH
