@@ -14,6 +14,7 @@ import pandas as pd
 
 from dotenv import load_dotenv
 
+
 class LUISEnv:
     def __init__(self, env_file_path: str=""):
         # On charge le fichier des variables d'environnement
@@ -32,7 +33,7 @@ class LUISEnv:
 
 def pprint_dict(data: dict):
     """Affiche un dictionnaire en indentant ses sous-éléments."""
-    
+
     print(json.dumps(data, indent=2))
 
 
