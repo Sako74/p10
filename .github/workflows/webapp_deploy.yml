@@ -5,7 +5,8 @@ on:
 
 env:
   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-  SCRIPT_PATH: '$GITHUB_WORKSPACE/P10_03_chatbot/chatbot_deploy.sh'
+  CHATBOT_PATH: '$GITHUB_WORKSPACE/P10_03_chatbot/'
+  SCRIPT_NAME: 'chatbot_deploy.sh'
 
 jobs:
   deploy:
@@ -22,5 +23,7 @@ jobs:
       with:
         azcliversion: 2.30.0
         inlineScript: |
-          chmod +x ${{ env.SCRIPT_PATH }}
+          pushd './${{ env.CHATBOT_PATH }}'
+          chmod +x ${{ env.SCRIPT_NAME }}
           ${{ env.SCRIPT_PATH }}
+          popd
