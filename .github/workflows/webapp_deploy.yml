@@ -5,8 +5,8 @@ on:
 
 env:
   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
-  CHATBOT_PATH: 'P10_03_chatbot'
-  SCRIPT_NAME: 'chatbot_deploy.sh'
+  CHATBOT_PATH: $GITHUB_WORKSPACE/P10_03_chatbot
+  SCRIPT_NAME: $GITHUB_WORKSPACE/P10_03_chatbot/chatbot_deploy.sh
 
 jobs:
   deploy:
