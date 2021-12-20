@@ -6,7 +6,7 @@ on:
 env:
   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
   AZURE_WORKSPACE: ${{ secrets.AZURE_WORKSPACE }}
-  LUIS_PATH: 'P10_03_luis'
+  LUIS_PATH: 'P10_02_luis'
   PYTHON_VERSION: '3.8.8'
 
 jobs:
