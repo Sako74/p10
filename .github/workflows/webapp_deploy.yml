@@ -23,7 +23,7 @@ jobs:
       with:
         azcliversion: 2.30.0
         inlineScript: |
-          pushd './${{ env.CHATBOT_PATH }}'
+          pushd ${{ env.CHATBOT_PATH }}
           chmod +x ${{ env.SCRIPT_NAME }}
           ${{ env.SCRIPT_PATH }}
           popd
