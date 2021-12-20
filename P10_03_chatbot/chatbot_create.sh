@@ -17,10 +17,10 @@ pushd "webapp/"
 # On crée les réssources et on déploie les fichiers présent dans le dossier de l'application web
 az webapp up -g $CHATBOT_RG -n $CHATBOT_APP_SITE_NAME -l $CHATBOT_APP_LOC --plan $CHATBOT_APP_PLAN_NAME --runtime $CHATBOT_APP_RUNTIME --sku $CHATBOT_APP_SKU
 
+popd
+
 # On ajoute le script permettant de démarrer l'application web
 az webapp config set -g $CHATBOT_RG -n $CHATBOT_APP_SITE_NAME --startup-file $CHATBOT_APP_STARTUP_FILE
-
-popd
 
 ################################################################################
 # Création du service Application Insights
@@ -43,7 +43,6 @@ CHATBOT_APP_INSIGHTS_KEY=$(az monitor app-insights component show -g $CHATBOT_RG
 ################################################################################
 
 # On génère un mot de passe aléatoire
-# CHATBOT_BOT_PASSWORD=$(uuidgen)
 CHATBOT_BOT_PASSWORD=`python -c "import uuid; print(uuid.uuid1(), end=None)"`
 
 # On génère une azure application et on récupère son id
@@ -68,7 +67,7 @@ az webapp config appsettings set -g $CHATBOT_RG -n $CHATBOT_APP_SITE_NAME --sett
 # On redémarre l'application web
 az webapp restart -g $CHATBOT_RG -n $CHATBOT_APP_SITE_NAME
 
-# On enregistrer les variables d'environnement
+# On enregistre les variables d'environnement
 az webapp config appsettings list -g $CHATBOT_RG -n $CHATBOT_APP_SITE_NAME --query "[].[name, value]" -o tsv | tr '\t' '=' > $CHATBOT_ENV_FILE_PATH
 
 echo "Créer un secret Github avec la clé WEBAPP_ENV et la valeur suivante :"
