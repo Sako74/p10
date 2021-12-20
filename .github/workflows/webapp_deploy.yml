@@ -25,5 +25,5 @@ jobs:
         inlineScript: |
           pushd ${{ env.CHATBOT_PATH }}
           chmod +x ${{ env.SCRIPT_NAME }}
-          ${{ env.SCRIPT_PATH }}
+          ./${{ env.SCRIPT_NAME }}
           popd
