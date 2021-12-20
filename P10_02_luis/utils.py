@@ -14,39 +14,26 @@ import pandas as pd
 
 from dotenv import load_dotenv
 
-# +
-# On charge les variables d'environnement
-LUIS_AUTH_KEY = os.getenv("LUIS_AUTH_KEY")
-LUIS_AUTH_ENDPOINT = os.getenv("LUIS_AUTH_ENDPOINT")
+class LUISEnv:
+    def __init__(self, env_file_path: str=""):
+        # On charge le fichier des variables d'environnement
+        if env_file_path:
+            load_dotenv(env_file_path, override=True)
 
-LUIS_PRED_KEY = os.getenv("LUIS_PRED_KEY")
-LUIS_PRED_ENDPOINT = os.getenv("LUIS_PRED_ENDPOINT")
+        # On charge les variables d'environnement
+        self.LUIS_AUTH_KEY = os.getenv("LUIS_AUTH_KEY")
+        self.LUIS_AUTH_ENDPOINT = os.getenv("LUIS_AUTH_ENDPOINT")
 
-LUIS_APP_ID = os.getenv("LUIS_APP_ID")
+        self.LUIS_PRED_KEY = os.getenv("LUIS_PRED_KEY")
+        self.LUIS_PRED_ENDPOINT = os.getenv("LUIS_PRED_ENDPOINT")
 
+        self.LUIS_APP_ID = os.getenv("LUIS_APP_ID")
 
-# -
 
 def pprint_dict(data: dict):
     """Affiche un dictionnaire en indentant ses sous-éléments."""
     
     print(json.dumps(data, indent=2))
-
-
-def get_env(env_file_path: str):
-    """On charge les variables d'environnement"""
-    
-    # On charge le fichier des variables d'environnement
-    load_dotenv(env_file_path, override=True)
-    
-    # On charge les variables d'environnement
-    LUIS_AUTH_KEY = os.getenv("LUIS_AUTH_KEY")
-    LUIS_AUTH_ENDPOINT = os.getenv("LUIS_AUTH_ENDPOINT")
-
-    LUIS_PRED_KEY = os.getenv("LUIS_PRED_KEY")
-    LUIS_PRED_ENDPOINT = os.getenv("LUIS_PRED_ENDPOINT")
-
-    LUIS_APP_ID = os.getenv("LUIS_APP_ID")
 
 
 def get_ws(azure_credentials: dict, azure_workspace: dict) -> Workspace:
@@ -92,7 +79,7 @@ def check_response_ok_or_raise_for_status(response):
         response.raise_for_status()
 
 
-def create_new_version(app_version: str, app_params: dict, app_utterances: list=[]):
+def create_new_version(env: LUISEnv, app_version: str, app_params: dict, app_utterances: list=[]):
     """Crée un nouvelle version d'una application LUIS"""
     
     # On ajoute les utterances aux paramètres de l'application
@@ -101,12 +88,12 @@ def create_new_version(app_version: str, app_params: dict, app_utterances: list=
     
     # On envoie la requête permettant de créer la nouvelle version
     response = requests.post(
-        url=f"{LUIS_AUTH_ENDPOINT}luis/authoring/v3.0-preview/apps/{LUIS_APP_ID}/versions/import",
+        url=f"{env.LUIS_AUTH_ENDPOINT}luis/authoring/v3.0-preview/apps/{env.LUIS_APP_ID}/versions/import",
         params={
             "versionId": app_version,
         },
         headers={
-            "Ocp-Apim-Subscription-Key": LUIS_AUTH_KEY,
+            "Ocp-Apim-Subscription-Key": env.LUIS_AUTH_KEY,
         },
         json=app_params_tmp
     )
@@ -115,20 +102,20 @@ def create_new_version(app_version: str, app_params: dict, app_utterances: list=
     check_response_ok_or_raise_for_status(response)
 
 
-def train(app_version: str, check_status_period: int=10):
+def train(env: LUISEnv, app_version: str, check_status_period: int=10):
     """Entrainement du modèle de l'app LUIS"""
     
     # On crée le client avec les informations d'authentification
-    client = LUISAuthoringClient(LUIS_AUTH_ENDPOINT, CognitiveServicesCredentials(LUIS_AUTH_KEY))
+    client = LUISAuthoringClient(env.LUIS_AUTH_ENDPOINT, CognitiveServicesCredentials(env.LUIS_AUTH_KEY))
 
     # On entraine le modèle
-    client.train.train_version(LUIS_APP_ID, app_version)
+    client.train.train_version(env.LUIS_APP_ID, app_version)
     
     # On attend la fin de l'entrainement
     waiting = True
     while waiting:
         # On demande le status de l'entrainement
-        info = client.train.get_status(LUIS_APP_ID, app_version)
+        info = client.train.get_status(env.LUIS_APP_ID, app_version)
 
         # On vérifie si l'entrainement est en attente ou en cours d'exécution
         waiting = any(map(lambda x: x.details.status in ["Queued", "InProgress"], info))
@@ -137,17 +124,17 @@ def train(app_version: str, check_status_period: int=10):
             time.sleep(check_status_period)
 
 
-def get_params(app_version: str) -> dict:
+def get_params(env: LUISEnv, app_version: str) -> dict:
     """Renvoie les paramètres de l'app LUIS"""
     
     # On envoie la requête permettant d'exporter le modèle au format json
     response = requests.get(
-        url=f"{LUIS_AUTH_ENDPOINT}luis/authoring/v3.0-preview/apps/{LUIS_APP_ID}/versions/{app_version}/export",
+        url=f"{env.LUIS_AUTH_ENDPOINT}luis/authoring/v3.0-preview/apps/{env.LUIS_APP_ID}/versions/{app_version}/export",
         params={
             "format": "json"
         },
         headers={
-            "Ocp-Apim-Subscription-Key": LUIS_AUTH_KEY,
+            "Ocp-Apim-Subscription-Key": env.LUIS_AUTH_KEY,
         }
     )
     
@@ -158,7 +145,7 @@ def get_params(app_version: str) -> dict:
     return response.json()
 
 
-def get_utterances(app_version: str) -> list:
+def get_utterances(env: LUISEnv, app_version: str) -> list:
     """Renvoie les utterances de l'app LUIS"""
     
     # On envoie la paramètres du modèle
@@ -168,28 +155,28 @@ def get_utterances(app_version: str) -> list:
     return params["utterances"]
 
 
-def deploy(app_version: str, is_staging: bool=True):
+def deploy(env: LUISEnv, app_version: str, is_staging: bool=True):
     """Déploiement de l'application LUIS"""
     
     # On crée le client avec les informations d'authentification
-    client = LUISAuthoringClient(LUIS_AUTH_ENDPOINT, CognitiveServicesCredentials(LUIS_AUTH_KEY))
+    client = LUISAuthoringClient(env.LUIS_AUTH_ENDPOINT, CognitiveServicesCredentials(env.LUIS_AUTH_KEY))
 
     # On plublie l'app
-    client.apps.publish(LUIS_APP_ID, app_version, is_staging=is_staging);
+    client.apps.publish(env.LUIS_APP_ID, app_version, is_staging=is_staging);
 
 
-def get_prediction(is_staging: bool, utterance) -> dict:
+def get_prediction(env: LUISEnv, is_staging: bool, utterance) -> dict:
     """Renvoie une prédiction faite par l'application LUIS"""
     
     # On définie le slot à tester
     slots = "Staging" if is_staging else "Production"
     
     # On crée le client avec les informations d'authentification
-    client_runtime = LUISRuntimeClient(LUIS_PRED_ENDPOINT, CognitiveServicesCredentials(LUIS_PRED_KEY))
+    client_runtime = LUISRuntimeClient(env.LUIS_PRED_ENDPOINT, CognitiveServicesCredentials(env.LUIS_PRED_KEY))
 
     # On effectue la prédiction
     pred = client_runtime.prediction.get_slot_prediction(
-        LUIS_APP_ID,
+        env.LUIS_APP_ID,
         slots,
         {"query" : [utterance]}
     )
@@ -197,7 +184,7 @@ def get_prediction(is_staging: bool, utterance) -> dict:
     return pred.as_dict()
 
 
-def evaluate(is_staging: bool, utterances: list, check_status_period: int=10) -> pd.DataFrame:
+def evaluate(env: LUISEnv, is_staging: bool, utterances: list, check_status_period: int=10) -> pd.DataFrame:
     """Evaluation de l'application LUIS sur un jeu de test"""
     
     # On définie le slot à tester
@@ -205,9 +192,9 @@ def evaluate(is_staging: bool, utterances: list, check_status_period: int=10) ->
     
     # On envoie la requête permettant de lancer l'évaluation
     response = requests.post(
-        url=f"{LUIS_PRED_ENDPOINT}luis/v3.0-preview/apps/{LUIS_APP_ID}/slots/{slots}/evaluations",
+        url=f"{env.LUIS_PRED_ENDPOINT}luis/v3.0-preview/apps/{env.LUIS_APP_ID}/slots/{slots}/evaluations",
         headers={
-            "Ocp-Apim-Subscription-Key": LUIS_AUTH_KEY,
+            "Ocp-Apim-Subscription-Key": env.LUIS_AUTH_KEY,
         },
         json=utterances
     )
@@ -222,9 +209,9 @@ def evaluate(is_staging: bool, utterances: list, check_status_period: int=10) ->
     while waiting:
         # On check le status
         response = requests.get(
-            url=f"{LUIS_PRED_ENDPOINT}luis/v3.0-preview/apps/{LUIS_APP_ID}/slots/{slots}/evaluations/{operation_id}/status",
+            url=f"{env.LUIS_PRED_ENDPOINT}luis/v3.0-preview/apps/{env.LUIS_APP_ID}/slots/{slots}/evaluations/{operation_id}/status",
             headers={
-                "Ocp-Apim-Subscription-Key": LUIS_AUTH_KEY,
+                "Ocp-Apim-Subscription-Key": env.LUIS_AUTH_KEY,
             }
         )
         
@@ -239,9 +226,9 @@ def evaluate(is_staging: bool, utterances: list, check_status_period: int=10) ->
         
     # On récupère les résultats de l'évaluation
     response = requests.get(
-        url=f"{LUIS_PRED_ENDPOINT}luis/v3.0-preview/apps/{LUIS_APP_ID}/slots/{slots}/evaluations/{operation_id}/result",
+        url=f"{env.LUIS_PRED_ENDPOINT}luis/v3.0-preview/apps/{env.LUIS_APP_ID}/slots/{slots}/evaluations/{operation_id}/result",
         headers={
-            "Ocp-Apim-Subscription-Key": LUIS_AUTH_KEY,
+            "Ocp-Apim-Subscription-Key": env.LUIS_AUTH_KEY,
         }
     )
     
@@ -265,11 +252,11 @@ def evaluate(is_staging: bool, utterances: list, check_status_period: int=10) ->
     return res
 
 
-def delete(app_version: str):
+def delete(env: LUISEnv, app_version: str):
     """Déploiement de l'application LUIS"""
     
     # On crée le client avec les informations d'authentification
-    client = LUISAuthoringClient(LUIS_AUTH_ENDPOINT, CognitiveServicesCredentials(LUIS_AUTH_KEY))
+    client = LUISAuthoringClient(env.LUIS_AUTH_ENDPOINT, CognitiveServicesCredentials(env.LUIS_AUTH_KEY))
 
     # On plublie l'app
-    client.versions.delete(LUIS_APP_ID, app_version)
+    client.versions.delete(env.LUIS_APP_ID, app_version)

@@ -21,7 +21,7 @@ if __name__ == "__main__":
     
     print("Chargement des variables d'environement.")
     
-    get_env(".env")
+    env = LUISEnv(".env")
     
     print("Chargement du workspace.")
     
@@ -65,20 +65,20 @@ if __name__ == "__main__":
     
     print(f"Création de la version {app_version}.")
     
-    create_new_version(app_version, params["model"], utterances_train)
+    create_new_version(env, app_version, params["model"], utterances_train)
     
     print(f"Entrainement du modèle avec le dataset {ds_name} v{ds_version}.")
     
-    train(app_version)
+    train(env, app_version)
     
     slots = "staging" if args.is_staging else "production"
     print(f"Déploiement du modèle en {slots}.")
     
-    deploy(app_version, args.is_staging)
+    deploy(env, app_version, args.is_staging)
     
     print(f"Evaluation du modèle avec le dataset {ds_name} v{ds_version}.")
     
-    res = evaluate(args.is_staging, utterances_test)
+    res = evaluate(env, args.is_staging, utterances_test)
     
     # On affiche les résultats
     print(res.to_markdown())
@@ -86,4 +86,4 @@ if __name__ == "__main__":
     # On supprime le modèle si besoin
     if args.is_tmp:
         print("Suppression du modèle.")
-        delete(app_version)
+        delete(env, app_version)
