@@ -44,8 +44,23 @@ LUIS_APP_ID=`curl -v -X POST "https://westus.api.cognitive.microsoft.com/luis/au
 -H "Ocp-Apim-Subscription-Key: $LUIS_AUTH_KEY" \
 --data-ascii "$LUIS_PARAMS"`
 
+# On enlève les guillements
+LUIS_APP_ID=$(echo $LUIS_APP_ID | tr -d '"')
+
 # On enregistre l'id de l'application
 echo LUIS_APP_ID=$LUIS_APP_ID >> $LUIS_ENV_FILE_PATH
 
+# On assigne la ressource de prédiction à l'application
+TOKEN=`az account get-access-token --resource=https://management.core.windows.net/ --query accessToken --output tsv | tr -d '[ \t\n\r\f\v]'`
+SUBSCRIPTION_ID=`az account show --query id --output tsv | tr -d '[ \t\n\r\f\v]'`
+JSON_FMT='{"azureSubscriptionId": "%s", "resourceGroup": "%s", "accountName": "%s"}'
+
+curl -v -X POST "https://westus.api.cognitive.microsoft.com/luis/authoring/v3.0-preview/apps/$LUIS_APP_ID/azureaccounts" \
+-H "Authorization: Bearer $TOKEN" \
+-H "Content-Type: application/json" \
+-H "Ocp-Apim-Subscription-Key: $LUIS_AUTH_KEY" \
+--data-ascii "$(printf "$JSON_FMT" "$SUBSCRIPTION_ID" "$LUIS_RG" "$LUIS_PRED_NAME")"
+
+# On demande à l'utilisateur de créer un secret Github
 echo "Créer un secret Github avec la clé LUIS_ENV et la valeur suivante :"
 cat $LUIS_ENV_FILE_PATH
