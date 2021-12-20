@@ -125,11 +125,7 @@ class MainDialog(ComponentDialog):
             # If the call to the booking service was successful tell the user.
             # time_property = Timex(result.travel_date)
             # travel_date_msg = time_property.to_natural_language(datetime.now())
-            msg_txt = (
-                f"I have you booked a flight from {result.from_city} to {result.to_city}"
-                f" between the {result.from_dt} and the {result.to_dt}."
-                f" I respected your budget of {result.budget}."
-            )
+            msg_txt = ("Thank you, soon you will receive our best offers.")
             message = MessageFactory.text(msg_txt, msg_txt, InputHints.ignoring_input)
             await step_context.context.send_activity(message)
         else:

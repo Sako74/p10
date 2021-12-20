@@ -5,7 +5,8 @@
 from datatypes_date_time.timex import Timex
 
 from botbuilder.dialogs import WaterfallDialog, WaterfallStepContext, DialogTurnResult
-from botbuilder.dialogs.prompts import ConfirmPrompt, TextPrompt, PromptOptions
+from botbuilder.dialogs.prompts import ConfirmPrompt, TextPrompt, PromptOptions, PromptCultureModels
+from botbuilder.dialogs.choices import Choice, ChoiceFactoryOptions
 from botbuilder.core import MessageFactory, BotTelemetryClient, NullTelemetryClient
 from .cancel_and_help_dialog import CancelAndHelpDialog
 from .date_resolver_dialog import DateResolverDialog
@@ -41,7 +42,24 @@ class BookingDialog(CancelAndHelpDialog):
         waterfall_dialog.telemetry_client = telemetry_client
 
         self.add_dialog(text_prompt)
-        self.add_dialog(ConfirmPrompt(ConfirmPrompt.__name__))
+
+        # BUG : We map all cultures to English, else there is a misunderstanding
+        # between English (Yes, No) and French (Oui, Non).
+        default_locale = {
+            c.locale: (
+                Choice(PromptCultureModels.English.yes_in_language),
+                Choice(PromptCultureModels.English.no_in_language),
+                ChoiceFactoryOptions(
+                    PromptCultureModels.English.separator,
+                    PromptCultureModels.English.inline_or,
+                    PromptCultureModels.English.inline_or_more,
+                    True
+                ),
+            )
+            for c in PromptCultureModels.get_supported_cultures()
+        }
+
+        self.add_dialog(ConfirmPrompt(ConfirmPrompt.__name__, default_locale=default_locale))
         self.add_dialog(
             DateResolverDialog(
                 DateResolverDialog.__name__ + "_from_dt",
@@ -156,9 +174,11 @@ class BookingDialog(CancelAndHelpDialog):
         booking_details.budget = step_context.result
 
         msg = (
-            f"Please confirm: you would like to book a flight from {booking_details.from_city} to {booking_details.to_city}"
-            f" between the {booking_details.from_dt} and the {booking_details.to_dt}."
-            f" with a budget of {booking_details.budget}."
+            "Please confirm the following information:\n"
+            "- You want to **book a flight**.\n"
+            f"- From **{booking_details.from_city}** to **{booking_details.to_city}**.\n"
+            f"- Between the **{booking_details.from_dt}** and the **{booking_details.to_dt}**.\n"
+            f"- With a budget of **{booking_details.budget}**."
         )
 
         # Offer a YES/NO prompt.
