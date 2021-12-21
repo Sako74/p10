@@ -26,8 +26,9 @@ az monitor scheduled-query create \
 --scopes $CHATBOT_APP_INSIGHTS_ID \
 --condition "count 'Placeholder_1' > $ALERT_COUNT_MAX" \
 --condition-query Placeholder_1="$ALERT_QUERY" \
---description "Insatisfaction alert" \
+--description "$ALERT_DESC" \
 --action $CHATBOT_ACTIONS_ID \
 --evaluation-frequency $ALERT_EVAL_FREQ \
 --window-size $ALERT_WIN_SIZE \
---severity 2
+--severity 2 \
+--auto-mitigate false 

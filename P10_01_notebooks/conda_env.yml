@@ -17,3 +17,6 @@ dependencies:
     - joblib
     - tqdm
     - pydantic
+    - ipywidgets
+    - Markdown
+    - jupyter_contrib_nbextensions
