@@ -7,6 +7,9 @@ source "../P10_02_luis/.env"
 # On crée le chemin vers le fichier qui va contenir les varaibles d'environnement
 CHATBOT_ENV_FILE_PATH="webapp/.env"
 
+# On crée le chemin vers le fichier qui va contenir les varaibles d'environnement
+NOTEBOOK_ENV_FILE_PATH="../P10_01_notebooks/.env"
+
 ################################################################################
 # Création et déploiement de l'application web
 ################################################################################
@@ -37,6 +40,21 @@ az monitor app-insights component connect-webapp -g $CHATBOT_RG -a $CHATBOT_APP_
 
 # On récupère la clé d'instrumentation
 CHATBOT_APP_INSIGHTS_KEY=$(az monitor app-insights component show -g $CHATBOT_RG --app $CHATBOT_APP_INSIGHTS_NAME --query  "instrumentationKey" --output tsv)
+
+# On récupère l'id de l'app de l'api de app insights
+CHATBOT_APP_INSIGHTS_APP_ID=$(az monitor app-insights component show -g $CHATBOT_RG --app $CHATBOT_APP_INSIGHTS_NAME --query  "appId" --output tsv)
+
+# On crée une nouvelle clé d'api
+CHATBOT_APP_INSIGHTS_API_KEY=$(az monitor app-insights api-key create \
+-g $CHATBOT_RG \
+--app $CHATBOT_APP_INSIGHTS_NAME \
+--api-key $CHATBOT_APP_INSIGHTS_API_KEY_NAME \
+--read-properties ReadTelemetry \
+--query  "apiKey" --output tsv)
+
+# On enregistrer les infos de connexion
+echo APP_INSIGHTS_API_ID=$CHATBOT_APP_INSIGHTS_APP_ID > $NOTEBOOK_ENV_FILE_PATH
+echo APP_INSIGHTS_API_KEY=$CHATBOT_APP_INSIGHTS_API_KEY >> $NOTEBOOK_ENV_FILE_PATH
 
 ################################################################################
 # Création du service Bot
