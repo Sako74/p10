@@ -7,6 +7,7 @@ from collections import defaultdict
 from datetime import datetime
 import tempfile
 import subprocess
+import random
 
 import numpy as np
 import pandas as pd
@@ -16,9 +17,13 @@ import seaborn as sns
 
 from tqdm.notebook import tqdm
 
+import joblib
+
 import ipywidgets as widgets
 from IPython.display import display
 import markdown
+
+from azureml.core import Workspace, Dataset
 
 from dotenv import load_dotenv, set_key
 
@@ -194,8 +199,10 @@ def get_tn_dialogs(env: AppInsightsAPIEnv, start_dt: str, end_dt: str) -> pd.Dat
 
 
 class InsatisfactionsAnalyser:
-    def __init__(self, data, res=None):
+    def __init__(self, data: pd.DataFrame, res: pd.DataFrame=None):
         self.data = data.groupby("main_dialog_uuid")
+        
+        self.error_types = ["unknown", "luis", "chatbot"]
         
         if res is None:
             self.res = data.groupby("main_dialog_uuid", as_index=False).agg({
@@ -203,9 +210,16 @@ class InsatisfactionsAnalyser:
                 "session_id": "first",
                 "text": "count",
             })
-            self.res.columns = ["main_dialog_uuid", "timestamp_min", "timestamp_max", "session_id", "text_nb"]
+            self.res.columns = [
+                "main_dialog_uuid",
+                "timestamp_min",
+                "timestamp_max",
+                "session_id",
+                "text_nb"
+            ]
             self.res["error_type"] = ""
             self.res["comment"] = ""
+            self.res["utterances"] = ""
         else:
             self.res = res
         
@@ -223,40 +237,68 @@ class InsatisfactionsAnalyser:
             border="1px solid black"
         ))
         
-        self.prev_button = widgets.Button(
-            description="Previous",
-            icon="arrow-left"
-        )
-
-        self.next_button = widgets.Button(
-            description="Next",
-            icon="arrow-right"
+        self.comment_label = widgets.Label("Comment")
+        self.comment_text = widgets.Textarea(
+            placeholder="Add a comment, bug description or new feature request.",
+            layout=widgets.Layout(
+                width="95%",
+                height="95px"
+            )
         )
         
-        self.error_type_sel = widgets.RadioButtons(
-            options=["unknown", "luis", "chatbot"],
+        self.utterances_label = widgets.Label("LUIS utterances")
+        self.utterances_text = widgets.Textarea(
+            placeholder="Add LUIS utterances to add to the training set.",
+            layout=widgets.Layout(
+                width="95%",
+                height="95px"
+            )
+        )
+        
+        self.prev_button = widgets.Button(
+            description="",
+            icon="arrow-left"
+        )
+        
+        self.error_type_sel = widgets.Dropdown(
+            options=self.error_types,
             value=None,
             description="Error type:"
         )
-        
-        self.comment_text = widgets.Textarea(
-            placeholder="Add a comment",
-            description="Comment:"
+
+        self.next_button = widgets.Button(
+            description="",
+            icon="arrow-right"
         )
         
-        self.options_vbox = widgets.VBox([
-            self.error_type_sel,
-            self.comment_text,
+        self.options_hbox = widgets.HBox([
             self.prev_button,
+            self.error_type_sel,
             self.next_button
-        ])
+        ], layout=widgets.Layout(
+            width="95%"
+        ))
         
-        self.analyser = widgets.HBox([self.dialog_vbox, self.options_vbox])
+        self.analysis_vbox = widgets.VBox([
+            self.comment_label,
+            self.comment_text,
+            self.utterances_label,
+            self.utterances_text,
+            self.options_hbox
+        ], layout=widgets.Layout(
+            width="40%",
+            height="300px",
+            display="flex",
+            justify_content="space-between"
+        ))
+        
+        self.analyser = widgets.HBox([self.dialog_vbox, self.analysis_vbox])
         
         self.prev_button.on_click(self.on_prev_button_clicked)
         self.next_button.on_click(self.on_next_button_clicked)
         self.error_type_sel.observe(self.on_error_type_sel_change, names="value")
         self.comment_text.observe(self.on_comment_text_change, names="value")
+        self.utterances_text.observe(self.on_utterances_text_change, names="value")
         
         self.update_all()
         
@@ -280,11 +322,16 @@ class InsatisfactionsAnalyser:
         self.res.loc[self.idx, "comment"] = value["new"]
         self.update_comment_text()
         
+    def on_utterances_text_change(self, value):
+        self.res.loc[self.idx, "utterances"] = value["new"]
+        self.update_utterances_text()
+        
     def update_all(self):
         self.update_dialog_vbox()
         self.update_buttons()
         self.update_error_type_sel()
         self.update_comment_text()
+        self.update_utterances_text()
         
     def update_buttons(self):
         if self.idx <= self.idx_min:
@@ -326,6 +373,10 @@ class InsatisfactionsAnalyser:
         value = self.res.loc[self.idx, "comment"]
         self.comment_text.value = value
         
+    def update_utterances_text(self):
+        value = self.res.loc[self.idx, "utterances"]
+        self.utterances_text.value = value
+        
     def display(self):
         display(self.analyser)
         
@@ -349,14 +400,57 @@ class InsatisfactionsAnalyser:
         )
         
     def load(self, dir_path, name):
-        # On enregistre les données. "coerce_timestamps" permet de conserver
-        # le type datetime dans les métadonnées du fichier parquet.
-        file_path = os.path.join(dir_path, f"{name}_data.parquet")
-        data = pd.read_parquet(file_path)
+        # On crée les chemins vers les fichiers
+        data_file_path = os.path.join(dir_path, f"{name}_data.parquet")
+        res_file_path = os.path.join(dir_path, f"{name}_res.parquet")
         
-        file_path = os.path.join(dir_path, f"{name}_res.parquet")
-        res = pd.read_parquet(file_path)
+        # On vérifie si les fichiers existent
+        if not os.path.exists(data_file_path):
+            print("Missing file:", data_file_path)
+            return
         
+        if not os.path.exists(res_file_path):
+            print("Missing file:", res_file_path)
+            return
+        
+        # On charge les données.
+        data = pd.read_parquet(data_file_path)
+        res = pd.read_parquet(res_file_path)
+        
+        # On initialise l'analyser avc les nouvelles données
         self.__init__(data, res)
 
 
+def get_texts_from_dataset(utterances_train: list, utterances_test: list, intent: str):
+    """Extraction des utterances du jus de données"""
+    
+    # Utterances du jeu d'entrainement
+    texts = list(filter(
+        lambda x: x["intent"] == intent,
+        utterances_train
+    ))
+
+    # Utterances du jeu de test
+    texts += list(filter(
+        lambda x: x["intent"] == intent,
+        utterances_test["LabeledTestSetUtterances"]
+    ))
+
+    # Extraction des textes
+    texts = [i["text"] for i in texts]
+    
+    return texts
+
+
+def texts_to_luis_utterances(texts: list, intent_name: str) -> list:
+    """Convertit des textes en des utterances pour LUIS."""
+    
+    utterances = []
+    for text in texts:
+        utterances.append({
+            "text": text,
+            "intent": intent_name,
+            "entities": []
+        })
+        
+    return utterances

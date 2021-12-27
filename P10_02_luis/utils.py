@@ -150,7 +150,7 @@ def get_utterances(env: LUISEnv, app_version: str) -> list:
     """Renvoie les utterances de l'app LUIS"""
     
     # On envoie la paramètres du modèle
-    params = get_params(app_version)
+    params = get_params(env, app_version)
     
     # On retourne les utterances
     return params["utterances"]
