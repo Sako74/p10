@@ -159,9 +159,9 @@ Exécuter le worklow suivant : [Function deploy](https://github.com/Sako74/p10/a
 
 # Organisation du projet
 
-Les projet est répartit en 5 dossiers.
+Les projet est répartit en 6 dossiers et 2 branches.
 
-# Dossier .github/workflows
+## Dossier .github/workflows
 
 Ce dossier contient la description des pipelines de déploiement continu.
 
@@ -191,3 +191,11 @@ Ce dossier contient tous les scripts permettant de :
 
 Ce dossier contient tous les scripts permettant de :
 - Créer les ressources et l'alerte des insatisfactions sur Azure.
+
+## Branche `main`
+
+Branche principale du projet.
+
+## Branche `gh-pages`
+
+Contient la page web qui permet d'accéder au chatbot via le canal `Web Chat`.
