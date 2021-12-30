@@ -147,6 +147,8 @@ cd P10_05_alert/
 
 ## Déployer le modèle LUIS
 
+Nous allons déployer le modèle LUIS à partir des informations du fichier `P10_02_luis/params.json`. Ce fichier contient la structure du modèle ainsi que les informations du datatset à utiliser pour l'entrainer. S'il s'agit du premier déploiement de LUIS, penser à d'abord créer le dataset et exécutant le notebook `P10_01_notebooks/create_luis_model.ipynb`. Mettre à jour ensuite le fichier `P10_02_luis/params.json` pour qu'il pointe sur la bonne version du dataset et commiter les changements.
+
 Exécuter le worklow suivant : [LUIS deploy](https://github.com/Sako74/p10/actions/workflows/luis_deploy.yml).
 
 ## Déployer le chatbot
@@ -159,7 +161,7 @@ Exécuter le worklow suivant : [Function deploy](https://github.com/Sako74/p10/a
 
 # Organisation du projet
 
-Les projet est répartit en 6 dossiers et 2 branches.
+Le projet est répartit en 6 dossiers et 2 branches.
 
 ## Dossier .github/workflows
 
