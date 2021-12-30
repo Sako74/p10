@@ -1,3 +1,124 @@
+# Introduction
+
+Ce projet a pour but la réalisation d'un MVP d'un chatbot pour aider les utilisateurs à choisir une offre de voyage.
+
+La version actuelle est en anglais. Elle permet de détecter les éléments suivants :
+- Ville de départ.
+- Ville de destination.
+- Date aller souhaitée du vol.
+- Date retour souhaitée du vol.
+- Budget maximum pour le prix total des billets.
+
+Si un des éléments est manquant, le chatbot va poser des questions pertinentes à l’utilisateur pour comprendre complètement sa demande. Lorsque le chatbot pense avoir compris tous les éléments de la demande de l’utilisateur, il reformule la demande de l’utilisateur et lui demande de valider sa compréhension.
+
+Nous avons aussi mis en place une architecture MLOps qui va nous permettre d'itérer rapidement sur le MVP.
+
 # Live demo
 
-Follow this link to test the MVP of the reservation bot: [live demo](https://sako74.github.io/p10/)
+On pourra tester le chatbot sur la Github Page de ce projet. Pour y accéder, cliquer sur le lien suivant : [live demo](https://sako74.github.io/p10/).
+
+<div align="center">
+  <img src="./P10_01_notebooks/data/gif/mvp_demo.gif" alt="Démonstration MVP" style="width:200px;"/>
+</div>
+<p align="center">Démonstration du MVP</p>
+
+# Architecture du projet
+
+Nous avons aussi mis en place une architecture MLOps qui va nous permettre d'itérer rapidement sur le MVP.
+
+![Architecture MLOps du projet](./P10_01_notebooks/data/img/archi_mlops.png)
+<p align="center">Architecture MLOps</p>
+
+# Création du l'infrastructure
+
+Pour utiliser ce projet, il faut commencer par créer plusieurs ressources sur Microsoft Azure et sur Github.
+
+## Création de la ressource Azure Machine Learning
+
+Suivez les instructions de ce tutoriel : [Démarrage rapide : créer les ressources d’espace de travail nécessaires pour commencer à utiliser Azure Machine Learning](https://docs.microsoft.com/fr-fr/azure/machine-learning/quickstart-create-resources).
+
+Cloner ce projet sur une instance de calcul.
+
+Ouvrir une invite de commande et aller dans le dossier du projet.
+
+Taper les lignes suivantes afin d'installer l'environnement conda nécessaire à l'exécution des notebooks :
+```
+conda env create --name p10 --file P10_01_notebooks/conda_env.yml
+conda activate p10
+python -m ipykernel install --user --name=p10
+```
+
+## Ajout du secret AZURE_WORKSPACE
+
+Ajouter le secret AZURE_WORKSPACE dans votre repository Github avec la valeur suivante :
+```
+{
+  "resourceGroup": "<nom du groupe de ressources de azure ml>",
+  "workspaceName": "<nom du workspace de azure ml>"
+}
+```
+
+## Ajout du secret AZURE_CREDENTIALS
+
+Il va falloir donner l'autorisation à Github d'accéder aux resources de Microsoft Azure. Pour cela, nous allons créer une Service Pincipal sur Azure.
+
+Ouvrir une invite de commande et taper la commande suivante :
+```
+# Replace {service-principal-name}, {subscription-id} and {resource-group} with your 
+# Azure subscription id and resource group name and any name for your service principle
+az ad sp create-for-rbac --name "p10-sp" --role contributor --sdk-auth
+```
+
+Ajouter le secret AZURE_CREDENTIALS dans votre repository Github avec la valeur renvoyée par la commande précédente.
+
+## Création des ressources LUIS
+
+Ouvrir une invite de commande et aller dans le dossier du projet.
+
+Taper les commandes suivantes afin de créer les ressources qui vont permettre de créer les ressources LUIS :
+```
+cd P10_02_luis/
+./luis_create.sh
+```
+
+## Ajout du secret LUIS_ENV
+
+Ajouter le secret LUIS_ENV dans votre repository Github avec la valeur renvoyée à la fin de la commande précédente.
+
+## Création des ressources du chatbot
+
+Ouvrir une invite de commande et aller dans le dossier du projet.
+
+Taper les commandes suivantes afin de créer les ressources qui vont permettre de créer les ressources du chatbot :
+```
+cd P10_03_chatbot/
+./chatbot_create.sh
+```
+
+## Ajout du secret WEBAPP_ENV
+
+Ajouter le secret WEBAPP_ENV dans votre repository Github avec la valeur renvoyée à la fin de la commande précédente.
+
+## Création des ressources de l'azure function
+
+Ouvrir une invite de commande et aller dans le dossier du projet.
+
+Taper les commandes suivantes afin de créer les ressources qui vont permettre de créer les ressources de l'azure function :
+```
+cd P10_04_function/
+./function_create.sh
+```
+
+## Ajout du secret FUNCTION_ENV
+
+Ajouter le secret FUNCTION_ENV dans votre repository Github avec la valeur renvoyée à la fin de la commande précédente.
+
+## Création des ressources pour l'alerte de satisfaction
+
+Ouvrir une invite de commande et aller dans le dossier du projet.
+
+Taper les commandes suivantes afin de créer les ressources qui vont permettre de créer les ressources de l'alerte de satisfaction :
+```
+cd P10_05_alert/
+./alert_create.sh
+```
