@@ -103,6 +103,8 @@ Dans Azure, aller sur la ressource `p10-chatbot-bot` précédemment créée. All
 
 Editer le fichier `index.html` de la banche `gh-pages`. Rechercher la balise `iframe` et remplacer la clé secrète par la nouvelle. Commiter le changement.
 
+Attention, il y a plusieurs façons d'utiliser le canal `Web Chat`. Celle utilisée ici n'est pas recommandée pour la mise en production d'un produit final ([en savoir plus](https://docs.microsoft.com/en-us/azure/bot-service/bot-service-channel-connect-webchat?view=azure-bot-service-4.0)).
+
 ## Création des ressources de l'azure function
 
 Ouvrir une invite de commande et aller dans le dossier du projet.
@@ -155,4 +157,37 @@ Exécuter le worklow suivant : [Webapp deploy](https://github.com/Sako74/p10/act
 
 Exécuter le worklow suivant : [Function deploy](https://github.com/Sako74/p10/actions/workflows/function_deploy.yml).
 
-##
+# Organisation du projet
+
+Les projet est répartit en 5 dossiers.
+
+# Dossier .github/workflows
+
+Ce dossier contient la description des pipelines de déploiement continu.
+
+## Dossier P10_01_notebooks
+
+Ce dossier contient les notebooks du projet.
+
+## Dossier P10_02_luis
+
+Ce dossier contient tous les scripts permettant de :
+- Créer les ressources LUIS sur Azure.
+- Entrainer, déployer et évaluer un modèle LUIS.
+
+## Dossier P10_03_chatbot
+
+Ce dossier contient tous les scripts permettant de :
+- Créer les ressources du chatbot sur Azure.
+- Tester et déployer l'application web du chatbot.
+
+## Dossier P10_04_function
+
+Ce dossier contient tous les scripts permettant de :
+- Créer les ressources de l'azure function sur Azure.
+- Tester et déployer l'azure function qui va créer automatiquement des Github issues.
+
+## Dossier P10_05_alert
+
+Ce dossier contient tous les scripts permettant de :
+- Créer les ressources et l'alerte des insatisfactions sur Azure.
