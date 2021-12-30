@@ -48,9 +48,9 @@ conda activate p10
 python -m ipykernel install --user --name=p10
 ```
 
-## Ajout du secret AZURE_WORKSPACE
+## Ajout du secret `AZURE_WORKSPACE`
 
-Ajouter le secret AZURE_WORKSPACE dans votre repository Github avec la valeur suivante :
+Ajouter le secret `AZURE_WORKSPACE` dans votre repository Github avec la valeur suivante :
 ```
 {
   "resourceGroup": "<nom du groupe de ressources de azure ml>",
@@ -58,18 +58,16 @@ Ajouter le secret AZURE_WORKSPACE dans votre repository Github avec la valeur su
 }
 ```
 
-## Ajout du secret AZURE_CREDENTIALS
+## Ajout du secret `AZURE_CREDENTIALS`
 
 Il va falloir donner l'autorisation à Github d'accéder aux resources de Microsoft Azure. Pour cela, nous allons créer une Service Pincipal sur Azure.
 
 Ouvrir une invite de commande et taper la commande suivante :
 ```
-# Replace {service-principal-name}, {subscription-id} and {resource-group} with your 
-# Azure subscription id and resource group name and any name for your service principle
 az ad sp create-for-rbac --name "p10-sp" --role contributor --sdk-auth
 ```
 
-Ajouter le secret AZURE_CREDENTIALS dans votre repository Github avec la valeur renvoyée par la commande précédente.
+Ajouter le secret `AZURE_CREDENTIALS` dans votre repository Github avec la valeur renvoyée par la commande précédente.
 
 ## Création des ressources LUIS
 
@@ -81,9 +79,9 @@ cd P10_02_luis/
 ./luis_create.sh
 ```
 
-## Ajout du secret LUIS_ENV
+## Ajout du secret `LUIS_ENV`
 
-Ajouter le secret LUIS_ENV dans votre repository Github avec la valeur renvoyée à la fin de la commande précédente.
+Ajouter le secret `LUIS_ENV` dans votre repository Github avec la valeur renvoyée à la fin de la commande précédente.
 
 ## Création des ressources du chatbot
 
@@ -95,9 +93,15 @@ cd P10_03_chatbot/
 ./chatbot_create.sh
 ```
 
-## Ajout du secret WEBAPP_ENV
+## Ajout du secret `WEBAPP_ENV`
 
-Ajouter le secret WEBAPP_ENV dans votre repository Github avec la valeur renvoyée à la fin de la commande précédente.
+Ajouter le secret `WEBAPP_ENV` dans votre repository Github avec la valeur renvoyée à la fin de la commande précédente.
+
+## Mise à jour la Github Page
+
+Dans Azure, aller sur la ressource `p10-chatbot-bot` précédemment créée. Aller dans la section `Canaux/Web Chat` et copier une des clés secrètes.
+
+Editer le fichier `index.html` de la banche `gh-pages`. Rechercher la balise `iframe` et remplacer la clé secrète par la nouvelle. Commiter le changement.
 
 ## Création des ressources de l'azure function
 
@@ -109,9 +113,23 @@ cd P10_04_function/
 ./function_create.sh
 ```
 
-## Ajout du secret FUNCTION_ENV
+## Ajout du secret `AZURE_FUNCTION_PUBLISH_PROFILE`
 
-Ajouter le secret FUNCTION_ENV dans votre repository Github avec la valeur renvoyée à la fin de la commande précédente.
+Ajouter le secret `AZURE_FUNCTION_PUBLISH_PROFILE` dans votre repository Github avec la valeur renvoyée à la fin de la commande précédente.
+
+Ce secret est utilisé par la Github action [Azure/functions-action@v1](https://github.com/marketplace/actions/azure-functions-action) qui permet de déployer le code du dossier P10_04_function/create_github_issue.
+
+## Ajout du secret `FUNCTION_ENV`
+
+Créer un token d'accès personnel en suivant les instructions suivantes : [Creating a personal access token](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
+
+Ajouter le secret `FUNCTION_ENV` dans votre repository Github avec les valeurs suivantes :
+```
+GITHUB_TOKEN=<GITHUB_TOKEN>
+GITHUB_REPO=Sako74/p10
+```
+
+Ce secret va permettre à l'azure function d'accéder au repository Github du projet et de créer automatiquement des issues.
 
 ## Création des ressources pour l'alerte de satisfaction
 
@@ -122,3 +140,19 @@ Taper les commandes suivantes afin de créer les ressources qui vont permettre d
 cd P10_05_alert/
 ./alert_create.sh
 ```
+
+# Déployer le MVP
+
+## Déployer le modèle LUIS
+
+Exécuter le worklow suivant : [LUIS deploy](https://github.com/Sako74/p10/actions/workflows/luis_deploy.yml).
+
+## Déployer le chatbot
+
+Exécuter le worklow suivant : [Webapp deploy](https://github.com/Sako74/p10/actions/workflows/webapp_deploy.yml).
+
+## Déployer l'azure function
+
+Exécuter le worklow suivant : [Function deploy](https://github.com/Sako74/p10/actions/workflows/function_deploy.yml).
+
+##
