@@ -153,11 +153,11 @@ Exécuter le worklow suivant : [LUIS deploy](https://github.com/Sako74/p10/actio
 
 ## Déployer le chatbot
 
-Exécuter le worklow suivant : [Webapp deploy](https://github.com/Sako74/p10/actions/workflows/webapp_deploy.yml).
+Exécuter le worklow suivant : [Webapp test and deploy](https://github.com/Sako74/p10/actions/workflows/webapp_test_deploy.yml).
 
 ## Déployer l'azure function
 
-Exécuter le worklow suivant : [Function deploy](https://github.com/Sako74/p10/actions/workflows/function_deploy.yml).
+Exécuter le worklow suivant : [Function test and deploy](https://github.com/Sako74/p10/actions/workflows/function_test_deploy.yml).
 
 # Organisation du projet
 
