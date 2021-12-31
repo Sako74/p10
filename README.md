@@ -133,11 +133,11 @@ GITHUB_REPO=Sako74/p10
 
 Ce secret va permettre à l'azure function d'accéder au repository Github du projet et de créer automatiquement des issues.
 
-## Création des ressources pour l'alerte de satisfaction
+## Création des ressources pour l'alerte d'insatisfactions
 
 Ouvrir une invite de commande et aller dans le dossier du projet.
 
-Taper les commandes suivantes afin de créer les ressources qui vont permettre de créer les ressources de l'alerte de satisfaction :
+Taper les commandes suivantes afin de créer les ressources qui vont permettre de créer les ressources de l'alerte d'insatisfactions :
 ```
 cd P10_05_alert/
 ./alert_create.sh
