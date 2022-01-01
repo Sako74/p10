@@ -27,6 +27,8 @@ from azureml.core import Workspace, Dataset
 
 from dotenv import load_dotenv, set_key
 
+from github import Github
+
 sys.path.append("../")
 from P10_02_luis.utils import *
 
@@ -199,6 +201,12 @@ def get_tn_dialogs(env: AppInsightsAPIEnv, start_dt: str, end_dt: str) -> pd.Dat
 
 
 class InsatisfactionsAnalyser:
+    """Outil interactif permettant de visualiser et d'analyser les dialogues qui
+    sont sources d'insatisfactions.
+    
+    Cet outil utilise les ipywidgets.
+    """
+    
     def __init__(self, data: pd.DataFrame, res: pd.DataFrame=None):
         self.data = data.groupby("main_dialog_uuid")
         
@@ -314,15 +322,15 @@ class InsatisfactionsAnalyser:
 
         self.update_all()
         
-    def on_error_type_sel_change(self, value):
+    def on_error_type_sel_change(self, value: dict):
         self.res.loc[self.idx, "error_type"] = value["new"]
         self.update_error_type_sel()
         
-    def on_comment_text_change(self, value):
+    def on_comment_text_change(self, value: dict):
         self.res.loc[self.idx, "comment"] = value["new"]
         self.update_comment_text()
         
-    def on_utterances_text_change(self, value):
+    def on_utterances_text_change(self, value: dict):
         self.res.loc[self.idx, "utterances"] = value["new"]
         self.update_utterances_text()
         
@@ -380,7 +388,7 @@ class InsatisfactionsAnalyser:
     def display(self):
         display(self.analyser)
         
-    def save(self, dir_path, name):
+    def save(self, dir_path: str, name: str):
         # On enregistre les données. "coerce_timestamps" permet de conserver
         # le type datetime dans les métadonnées du fichier parquet.
         file_path = os.path.join(dir_path, f"{name}_data.parquet")
@@ -399,7 +407,7 @@ class InsatisfactionsAnalyser:
             allow_truncated_timestamps=True
         )
         
-    def load(self, dir_path, name):
+    def load(self, dir_path: str, name: str):
         # On crée les chemins vers les fichiers
         data_file_path = os.path.join(dir_path, f"{name}_data.parquet")
         res_file_path = os.path.join(dir_path, f"{name}_res.parquet")
@@ -419,6 +427,32 @@ class InsatisfactionsAnalyser:
         
         # On initialise l'analyser avc les nouvelles données
         self.__init__(data, res)
+        
+    def get_report(self, issue_ids: list):
+        report = "## Introduction\n\n"
+        report += "Analyse des issues : " + ", ".join(issue_ids)
+
+        report += "\n\n## Distribution des erreurs\n\n"
+
+        tmp = self.res["error_type"].value_counts().to_frame("error_nb")
+        tmp["%"] = self.res["error_type"].value_counts(normalize=True)
+        tmp.index.name = "error_type"
+
+        report += tmp.to_html(float_format=lambda x: f"{x:0.2f}")
+
+        report += "\n\n## Commentaires\n\n"
+
+        for comment in self.res["comment"]:
+            if comment:
+                report += comment + "\n"
+
+        report += "\n## Textes à labelliser pour LUIS\n\n"
+
+        for utterances in self.res["utterances"]:
+            if utterances:
+                report += utterances + "\n"
+
+        return report
 
 
 def get_texts_from_dataset(utterances_train: list, utterances_test: list, intent: str):
@@ -454,3 +488,14 @@ def texts_to_luis_utterances(texts: list, intent_name: str) -> list:
         })
         
     return utterances
+
+
+class GithubAPIEnv:
+    def __init__(self, env_file_path: str=""):
+        # On charge le fichier des variables d'environnement
+        if env_file_path:
+            load_dotenv(env_file_path, override=True)
+
+        # On charge les variables d'environnement
+        self.GITHUB_TOKEN = os.getenv("GITHUB_TOKEN")
+        self.GITHUB_REPO = os.getenv("GITHUB_REPO")

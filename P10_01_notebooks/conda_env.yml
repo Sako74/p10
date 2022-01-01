@@ -20,3 +20,4 @@ dependencies:
     - ipywidgets
     - Markdown
     - jupyter_contrib_nbextensions
+    - PyGithub
