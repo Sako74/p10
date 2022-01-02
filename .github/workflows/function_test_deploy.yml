@@ -2,6 +2,8 @@ name: Function test and deploy
 
 on:
   workflow_dispatch:
+  release:
+    types: [published]
 
 jobs:
   test:
