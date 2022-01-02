@@ -2,6 +2,9 @@ name: Webapp test
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'P10_03_chatbot/**'
 
 env:
   WEBAPP_PATH: 'P10_03_chatbot/webapp'
