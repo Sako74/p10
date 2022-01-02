@@ -414,7 +414,8 @@ class InsatisfactionsAnalyser:
             allow_truncated_timestamps=True
         )
         
-    def load(self, dir_path: str, name: str):
+    @classmethod
+    def load(cls, dir_path: str, name: str):
         # On crée les chemins vers les fichiers
         data_file_path = os.path.join(dir_path, f"{name}_data.parquet")
         res_file_path = os.path.join(dir_path, f"{name}_res.parquet")
@@ -422,18 +423,18 @@ class InsatisfactionsAnalyser:
         # On vérifie si les fichiers existent
         if not os.path.exists(data_file_path):
             print("Missing file:", data_file_path)
-            return
+            return None
         
         if not os.path.exists(res_file_path):
             print("Missing file:", res_file_path)
-            return
+            return None
         
         # On charge les données.
         data = pd.read_parquet(data_file_path)
         res = pd.read_parquet(res_file_path)
         
         # On initialise l'analyser avc les nouvelles données
-        self.__init__(data, res)
+        return cls(data, res)
         
     def get_report(self, issue_ids: list):
         report = "## Introduction\n\n"
