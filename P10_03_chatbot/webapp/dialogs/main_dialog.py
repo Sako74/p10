@@ -57,16 +57,6 @@ class MainDialog(ComponentDialog):
     async def intro_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
         self.uuid = uuid.uuid1().__str__()
 
-        # if not self._luis_recognizer.is_configured:
-        #     await step_context.context.send_activity(
-        #         MessageFactory.text(
-        #             "NOTE: LUIS is not configured. To enable all capabilities, add 'LuisAppId', 'LuisAPIKey' and "
-        #             "'LuisAPIHostName' to the appsettings.json file.",
-        #             input_hint=InputHints.ignoring_input,
-        #         )
-        #     )
-
-        #     return await step_context.next(None)
         message_text = (
             str(step_context.options)
             if step_context.options
@@ -81,19 +71,10 @@ class MainDialog(ComponentDialog):
         )
 
     async def act_step(self, step_context: WaterfallStepContext) -> DialogTurnResult:
-        # if not self._luis_recognizer.is_configured:
-        #     # LUIS is not configured, we just run the BookingDialog path with an empty BookingDetailsInstance.
-        #     return await step_context.begin_dialog(
-        #         self._booking_dialog_id, BookingDetails()
-        #     )
-
         # Call LUIS and gather any potential booking details. (Note the TurnContext has the response to the prompt.)
         intent, luis_result = await LuisHelper.execute_luis_query(
             self._luis_recognizer, step_context.context
         )
-
-        # intent = Intent.BOOK_FLIGHT.value
-        # luis_result = BookingDetails()
 
         if intent == Intent.BOOK_FLIGHT.value and luis_result:
             # Run the BookingDialog giving it whatever details we have from the LUIS call.
@@ -121,10 +102,6 @@ class MainDialog(ComponentDialog):
             result = step_context.result
 
             # Now we have all the booking details call the booking service.
-
-            # If the call to the booking service was successful tell the user.
-            # time_property = Timex(result.travel_date)
-            # travel_date_msg = time_property.to_natural_language(datetime.now())
             msg_txt = ("Thank you, soon you will receive our best offers.")
             message = MessageFactory.text(msg_txt, msg_txt, InputHints.ignoring_input)
             await step_context.context.send_activity(message)
