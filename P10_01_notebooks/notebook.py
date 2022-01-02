@@ -65,31 +65,42 @@ def turn_to_luis_utterance(turn: dict, intent_name: str, label_to_entity: dict) 
     """Convertit un turn du jeu de données en une utterance labellisée pour LUIS."""
     
     text = turn["text"]
+    
+    # Intent par défaut
+    intent = "None"
 
     entity_labels = []
     for i in turn["labels"]["acts_without_refs"]:
         for l in i["args"]:
             k = l["key"]
             v = l["val"]
-
-            if k and v:
+            
+            if k == "intent":
+                # Si il y a le label "intent", il s'agit d'une demande
+                # de réservation.
+                intent = intent_name
+            elif k and v:
+                # Les autres labels sont des entités
                 if k in label_to_entity.keys():
                     start_char_index = text.lower().find(v.lower())
                     if start_char_index == -1:
                         continue
                     
                     end_char_index = start_char_index + len(v) - 1
-
+                    
+                    # On met en forme l'entité au format LUIS
                     entity_labels.append({
-                        "startCharIndex": start_char_index,
-                        "endCharIndex": end_char_index,
-                        "entityName": label_to_entity[k],
+                        "entity": label_to_entity[k],
+                        "startPos": start_char_index,
+                        "endPos": end_char_index,
+                        "children": []
                     })
     
+    # On met en forme le texte labellisé au format LUIS
     res = {
         "text": text,
-        "intentName": intent_name,
-        "entityLabels": entity_labels,
+        "intent": intent,
+        "entities": entity_labels,
     }
     return res
 
@@ -125,22 +136,18 @@ def user_turns_to_luis_ds(
     df = pd.DataFrame(res)
     
     # On ajoute le nombre d'entitées labellisées dans le texte
-    df["entity_total_nb"] = df["entityLabels"].apply(len)
+    df["entity_total_nb"] = df["entities"].apply(len)
     
     # Pour chaque entitée, on ajoute le nombre de fois qu'elle apparait
     for entity_name in label_to_entity.values():
-        df[f"{entity_name}_nb"] = df["entityLabels"].apply(
+        df[f"{entity_name}_nb"] = df["entities"].apply(
             lambda x: len(list(
-                filter(lambda x1: x1["entityName"] == entity_name, x)
+                filter(lambda x1: x1["entity"] == entity_name, x)
             ))
         )
     
     # On ajoute le nombre de mot dans le texte
     df["text_word_nb"] = df["text"].apply(lambda x: len(x.split()))
-
-    # Enfin, on labellise à None les phrases sans aucune entitée
-    none_intent_mask = df["entity_total_nb"] == 0
-    df.loc[none_intent_mask, "intentName"] = "None"
     
     return df
 
