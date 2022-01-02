@@ -2,6 +2,8 @@ name: LUIS deploy
 
 on:
   workflow_dispatch:
+  release:
+    types: [published]
 
 env:
   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
