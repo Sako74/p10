@@ -6,6 +6,7 @@
 __pycache__
 P10_01_notebooks/data/*
 !P10_01_notebooks/data/img/
+!P10_01_notebooks/data/gif/
 outputs
 tmp
 venv
