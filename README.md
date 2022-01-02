@@ -18,7 +18,7 @@ Nous avons aussi mis en place une architecture MLOps qui va nous permettre d'it�
 On pourra tester le chatbot sur la Github Page de ce projet. Pour y accéder, cliquer sur le lien suivant : [live demo](https://sako74.github.io/p10/).
 
 <div align="center">
-  <img src="./P10_01_notebooks/data/gif/mvp_demo.gif" alt="Démonstration MVP" style="width:200px;"/>
+  <img src="./P10_01_notebooks/data/gif/mvp_demo.gif" alt="Démonstration MVP"/>
 </div>
 <p align="center">Démonstration du MVP</p>
 
