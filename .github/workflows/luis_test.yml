@@ -2,6 +2,9 @@ name: LUIS test
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'P10_02_luis/**'
 
 env:
   AZURE_CREDENTIALS: ${{ secrets.AZURE_CREDENTIALS }}
