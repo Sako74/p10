@@ -2,6 +2,9 @@ name: Function test
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - 'P10_04_function/**'
 
 env:
   FUNCTION_PATH: 'P10_04_function'
