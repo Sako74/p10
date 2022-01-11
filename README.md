@@ -143,6 +143,11 @@ cd P10_05_alert/
 ./alert_create.sh
 ```
 
+## Création du dashboard
+
+Dans Azure, aller sur la ressource `p10-chatbot-ai`. Aller dans la section `Overview/Application Dashboard`. Cliquer sur `Nouveau tableau de bord/Charger` et charger le fichier `P10_06_dashboard/p10-chatbot-dashboard.json`.
+
+
 # Déployer le MVP
 
 ## Déployer le modèle LUIS
