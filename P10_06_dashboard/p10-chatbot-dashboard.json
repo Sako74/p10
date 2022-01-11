@@ -1,0 +1,1067 @@
+{
+  "properties": {
+    "lenses": {
+      "0": {
+        "order": 0,
+        "parts": {
+          "0": {
+            "position": {
+              "x": 0,
+              "y": 0,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "resourceTypeMode",
+                  "isOptional": true
+                },
+                {
+                  "name": "ComponentId",
+                  "isOptional": true
+                },
+                {
+                  "name": "Scope",
+                  "value": {
+                    "resourceIds": [
+                      "/subscriptions/82f2cbcd-fb58-4d87-a682-9782dff74a97/resourceGroups/p10-chatbot-rg/providers/microsoft.insights/components/p10-chatbot-ai"
+                    ]
+                  },
+                  "isOptional": true
+                },
+                {
+                  "name": "PartId",
+                  "value": "10d37956-30a2-4d1d-8411-32d8d400756c",
+                  "isOptional": true
+                },
+                {
+                  "name": "Version",
+                  "value": "2.0",
+                  "isOptional": true
+                },
+                {
+                  "name": "TimeRange",
+                  "isOptional": true
+                },
+                {
+                  "name": "DashboardId",
+                  "isOptional": true
+                },
+                {
+                  "name": "DraftRequestParameters",
+                  "isOptional": true
+                },
+                {
+                  "name": "Query",
+                  "value": "// number of users per period\nlet queryStartDate = ago(14d);\nlet queryEndDate = now();\nlet groupByInterval = 1d;\ncustomEvents\n| where timestamp > queryStartDate\n| where timestamp < queryEndDate\n| summarize uc=dcount(user_Id) by bin(timestamp, groupByInterval)\n| render timechart\n\n",
+                  "isOptional": true
+                },
+                {
+                  "name": "ControlType",
+                  "value": "FrameControlChart",
+                  "isOptional": true
+                },
+                {
+                  "name": "SpecificChart",
+                  "value": "Line",
+                  "isOptional": true
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics",
+                  "isOptional": true
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "p10-chatbot-ai",
+                  "isOptional": true
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "timestamp",
+                      "type": "datetime"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "uc",
+                        "type": "long"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  },
+                  "isOptional": true
+                },
+                {
+                  "name": "LegendOptions",
+                  "value": {
+                    "isEnabled": true,
+                    "position": "Bottom"
+                  },
+                  "isOptional": true
+                },
+                {
+                  "name": "IsQueryContainTimeRange",
+                  "value": true,
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/PartType/LogsDashboardPart",
+              "settings": {
+                "content": {
+                  "Query": "let groupByInterval = 1d;\ncustomEvents\n| summarize user_nb=dcount(user_Id), session_nb=dcount(session_Id) by bin(timestamp, groupByInterval)\n| render timechart\n\n",
+                  "PartTitle": "Nombre d'utilisateurs et de sessions",
+                  "Dimensions": {
+                    "xAxis": {
+                      "name": "timestamp",
+                      "type": "datetime"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "user_nb",
+                        "type": "long"
+                      },
+                      {
+                        "name": "session_nb",
+                        "type": "long"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  },
+                  "IsQueryContainTimeRange": false
+                }
+              }
+            }
+          },
+          "1": {
+            "position": {
+              "x": 6,
+              "y": 0,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "resourceTypeMode",
+                  "isOptional": true
+                },
+                {
+                  "name": "ComponentId",
+                  "isOptional": true
+                },
+                {
+                  "name": "Scope",
+                  "value": {
+                    "resourceIds": [
+                      "/subscriptions/82f2cbcd-fb58-4d87-a682-9782dff74a97/resourceGroups/p10-chatbot-rg/providers/microsoft.insights/components/p10-chatbot-ai"
+                    ]
+                  },
+                  "isOptional": true
+                },
+                {
+                  "name": "PartId",
+                  "value": "117f7334-117a-4f52-bb31-0e4393aa7646",
+                  "isOptional": true
+                },
+                {
+                  "name": "Version",
+                  "value": "2.0",
+                  "isOptional": true
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P7D",
+                  "isOptional": true
+                },
+                {
+                  "name": "DashboardId",
+                  "isOptional": true
+                },
+                {
+                  "name": "DraftRequestParameters",
+                  "isOptional": true
+                },
+                {
+                  "name": "Query",
+                  "value": "let groupByInterval = 1d;\ncustomEvents\n| where name == 'TN' or name == 'TP'\n| extend mainDialogUuid = tostring(customDimensions['mainDialogUuid'])\n| project mainDialogUuid\n| join kind=rightsemi (\n    customEvents\n    | extend mainDialogUuid = tostring(customDimensions['mainDialogUuid'])\n    | project session_Id, mainDialogUuid, timestamp\n) on mainDialogUuid\n| sort by mainDialogUuid asc, timestamp asc\n| summarize start=min(timestamp), end=max(timestamp) by session_Id\n| extend session_s = (end - start) / 1s\n| project session_Id, start, end, session_s\n| summarize session_s_mean=avg(session_s) by bin(start, groupByInterval)\n| render timechart\n",
+                  "isOptional": true
+                },
+                {
+                  "name": "ControlType",
+                  "value": "FrameControlChart",
+                  "isOptional": true
+                },
+                {
+                  "name": "SpecificChart",
+                  "value": "Line",
+                  "isOptional": true
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics",
+                  "isOptional": true
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "p10-chatbot-ai",
+                  "isOptional": true
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "start",
+                      "type": "datetime"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "session_s_mean",
+                        "type": "real"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  },
+                  "isOptional": true
+                },
+                {
+                  "name": "LegendOptions",
+                  "value": {
+                    "isEnabled": true,
+                    "position": "Bottom"
+                  },
+                  "isOptional": true
+                },
+                {
+                  "name": "IsQueryContainTimeRange",
+                  "value": false,
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/PartType/LogsDashboardPart",
+              "settings": {
+                "content": {
+                  "Query": "let groupByInterval = 1d;\ncustomEvents\n| where name == 'TN' or name == 'TP'\n| extend mainDialogUuid = tostring(customDimensions['mainDialogUuid'])\n| project mainDialogUuid\n| join kind=rightsemi (\n    customEvents\n    | extend mainDialogUuid = tostring(customDimensions['mainDialogUuid'])\n    | project session_Id, mainDialogUuid, timestamp\n) on mainDialogUuid\n| sort by mainDialogUuid asc, timestamp asc\n| summarize start=min(timestamp), end=max(timestamp), dialog_nb=dcount(mainDialogUuid) by session_Id\n| extend duration_s = (end - start) / 1s\n| project session_Id, start, end, duration_s, dialog_nb\n| sort by start asc\n| extend timestamp = start\n| summarize session_duration_seconds=avg(duration_s) by bin(timestamp, groupByInterval)\n| render timechart\n\n",
+                  "PartTitle": "Durée moyenne des sessions en secondes",
+                  "Dimensions": {
+                    "xAxis": {
+                      "name": "timestamp",
+                      "type": "datetime"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "session_duration_seconds",
+                        "type": "real"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  }
+                }
+              }
+            }
+          },
+          "2": {
+            "position": {
+              "x": 12,
+              "y": 0,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "resourceTypeMode",
+                  "isOptional": true
+                },
+                {
+                  "name": "ComponentId",
+                  "isOptional": true
+                },
+                {
+                  "name": "Scope",
+                  "value": {
+                    "resourceIds": [
+                      "/subscriptions/82f2cbcd-fb58-4d87-a682-9782dff74a97/resourceGroups/p10-chatbot-rg/providers/microsoft.insights/components/p10-chatbot-ai"
+                    ]
+                  },
+                  "isOptional": true
+                },
+                {
+                  "name": "PartId",
+                  "value": "25fb2cab-5f9a-4ba5-9a14-2e61a491455f",
+                  "isOptional": true
+                },
+                {
+                  "name": "Version",
+                  "value": "2.0",
+                  "isOptional": true
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D",
+                  "isOptional": true
+                },
+                {
+                  "name": "DashboardId",
+                  "isOptional": true
+                },
+                {
+                  "name": "DraftRequestParameters",
+                  "isOptional": true
+                },
+                {
+                  "name": "Query",
+                  "value": "let groupByInterval = 1d;\ncustomEvents\n| where name == 'TN' or name == 'TP'\n| extend mainDialogUuid = tostring(customDimensions['mainDialogUuid'])\n| project mainDialogUuid\n| join kind=rightsemi (\n    customEvents\n    | extend mainDialogUuid = tostring(customDimensions['mainDialogUuid'])\n    | project session_Id, mainDialogUuid, timestamp\n) on mainDialogUuid\n| sort by mainDialogUuid asc, timestamp asc\n| summarize start=min(timestamp), end=max(timestamp), dialog_nb=dcount(mainDialogUuid) by session_Id\n| extend session_s = (end - start) / 1s\n| project session_Id, start, end, session_s, dialog_nb\n| sort by start asc\n\n",
+                  "isOptional": true
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsGrid",
+                  "isOptional": true
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics",
+                  "isOptional": true
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "p10-chatbot-ai",
+                  "isOptional": true
+                },
+                {
+                  "name": "Dimensions",
+                  "isOptional": true
+                },
+                {
+                  "name": "LegendOptions",
+                  "isOptional": true
+                },
+                {
+                  "name": "IsQueryContainTimeRange",
+                  "value": false,
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/PartType/LogsDashboardPart",
+              "settings": {
+                "content": {
+                  "GridColumnsWidth": {
+                    "start": "69px",
+                    "end": "63px",
+                    "duration_s": "109px",
+                    "dialog_nb": "104px",
+                    "session_Id": "109px"
+                  },
+                  "Query": "let groupByInterval = 1d;\ncustomEvents\n| where name == 'TN' or name == 'TP'\n| extend mainDialogUuid = tostring(customDimensions['mainDialogUuid'])\n| project mainDialogUuid\n| join kind=rightsemi (\n    customEvents\n    | extend mainDialogUuid = tostring(customDimensions['mainDialogUuid'])\n    | extend text = tostring(customDimensions['text'])\n    | where text != \"\"\n    | extend fromName = tostring(customDimensions['fromName'])\n    | filter fromName == 'You'\n    | project mainDialogUuid, timestamp\n) on mainDialogUuid\n| sort by mainDialogUuid asc, timestamp asc\n| summarize start=min(timestamp), end=max(timestamp), user_text_nb=count() by mainDialogUuid\n| extend duration_s = (end - start) / 1s\n| project mainDialogUuid, start, end, duration_s, user_text_nb\n| sort by start asc\n| extend timestamp = start\n| summarize user_text_nb=avg(user_text_nb) by bin(timestamp, groupByInterval)\n| render timechart\n\n",
+                  "ControlType": "FrameControlChart",
+                  "SpecificChart": "Line",
+                  "PartTitle": "Nombre moyen de textes utilisateur par dialogue",
+                  "Dimensions": {
+                    "xAxis": {
+                      "name": "timestamp",
+                      "type": "datetime"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "user_text_nb",
+                        "type": "real"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  },
+                  "LegendOptions": {
+                    "isEnabled": true,
+                    "position": "Bottom"
+                  }
+                }
+              }
+            }
+          },
+          "3": {
+            "position": {
+              "x": 0,
+              "y": 4,
+              "colSpan": 9,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "resourceTypeMode",
+                  "isOptional": true
+                },
+                {
+                  "name": "ComponentId",
+                  "isOptional": true
+                },
+                {
+                  "name": "Scope",
+                  "value": {
+                    "resourceIds": [
+                      "/subscriptions/82f2cbcd-fb58-4d87-a682-9782dff74a97/resourceGroups/p10-chatbot-rg/providers/microsoft.insights/components/p10-chatbot-ai"
+                    ]
+                  },
+                  "isOptional": true
+                },
+                {
+                  "name": "PartId",
+                  "value": "25fb2cab-5f9a-4ba5-9a14-2e61a491455f",
+                  "isOptional": true
+                },
+                {
+                  "name": "Version",
+                  "value": "2.0",
+                  "isOptional": true
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D",
+                  "isOptional": true
+                },
+                {
+                  "name": "DashboardId",
+                  "isOptional": true
+                },
+                {
+                  "name": "DraftRequestParameters",
+                  "isOptional": true
+                },
+                {
+                  "name": "Query",
+                  "value": "let groupByInterval = 1d;\ncustomEvents\n| where name == 'TN' or name == 'TP'\n| extend mainDialogUuid = tostring(customDimensions['mainDialogUuid'])\n| project mainDialogUuid\n| join kind=rightsemi (\n    customEvents\n    | extend mainDialogUuid = tostring(customDimensions['mainDialogUuid'])\n    | project session_Id, mainDialogUuid, timestamp\n) on mainDialogUuid\n| sort by mainDialogUuid asc, timestamp asc\n| summarize start=min(timestamp), end=max(timestamp), dialog_nb=dcount(mainDialogUuid) by session_Id\n| extend session_s = (end - start) / 1s\n| project session_Id, start, end, session_s, dialog_nb\n| sort by start asc\n\n",
+                  "isOptional": true
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsGrid",
+                  "isOptional": true
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics",
+                  "isOptional": true
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "p10-chatbot-ai",
+                  "isOptional": true
+                },
+                {
+                  "name": "Dimensions",
+                  "isOptional": true
+                },
+                {
+                  "name": "LegendOptions",
+                  "isOptional": true
+                },
+                {
+                  "name": "IsQueryContainTimeRange",
+                  "value": false,
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/PartType/LogsDashboardPart",
+              "settings": {
+                "content": {
+                  "GridColumnsWidth": {
+                    "start": "140px",
+                    "end": "138px",
+                    "duration_s": "109px",
+                    "dialog_nb": "107px",
+                    "session_Id": "220px"
+                  },
+                  "Query": "let groupByInterval = 1d;\ncustomEvents\n| where name == 'TN' or name == 'TP'\n| extend mainDialogUuid = tostring(customDimensions['mainDialogUuid'])\n| project mainDialogUuid\n| join kind=rightsemi (\n    customEvents\n    | extend mainDialogUuid = tostring(customDimensions['mainDialogUuid'])\n    | project session_Id, mainDialogUuid, timestamp\n) on mainDialogUuid\n| sort by mainDialogUuid asc, timestamp asc\n| summarize start=min(timestamp), end=max(timestamp), dialog_nb=dcount(mainDialogUuid) by session_Id\n| extend duration_s = (end - start) / 1s\n| project session_Id, start, end, duration_s, dialog_nb\n| sort by start asc\n\n",
+                  "PartTitle": "Durée des sessions et nombre de dialogues"
+                }
+              }
+            }
+          },
+          "4": {
+            "position": {
+              "x": 9,
+              "y": 4,
+              "colSpan": 9,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "resourceTypeMode",
+                  "isOptional": true
+                },
+                {
+                  "name": "ComponentId",
+                  "isOptional": true
+                },
+                {
+                  "name": "Scope",
+                  "value": {
+                    "resourceIds": [
+                      "/subscriptions/82f2cbcd-fb58-4d87-a682-9782dff74a97/resourceGroups/p10-chatbot-rg/providers/microsoft.insights/components/p10-chatbot-ai"
+                    ]
+                  },
+                  "isOptional": true
+                },
+                {
+                  "name": "PartId",
+                  "value": "25fb2cab-5f9a-4ba5-9a14-2e61a491455f",
+                  "isOptional": true
+                },
+                {
+                  "name": "Version",
+                  "value": "2.0",
+                  "isOptional": true
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D",
+                  "isOptional": true
+                },
+                {
+                  "name": "DashboardId",
+                  "isOptional": true
+                },
+                {
+                  "name": "DraftRequestParameters",
+                  "isOptional": true
+                },
+                {
+                  "name": "Query",
+                  "value": "let groupByInterval = 1d;\ncustomEvents\n| where name == 'TN' or name == 'TP'\n| extend mainDialogUuid = tostring(customDimensions['mainDialogUuid'])\n| project mainDialogUuid\n| join kind=rightsemi (\n    customEvents\n    | extend mainDialogUuid = tostring(customDimensions['mainDialogUuid'])\n    | project session_Id, mainDialogUuid, timestamp\n) on mainDialogUuid\n| sort by mainDialogUuid asc, timestamp asc\n| summarize start=min(timestamp), end=max(timestamp), dialog_nb=dcount(mainDialogUuid) by session_Id\n| extend session_s = (end - start) / 1s\n| project session_Id, start, end, session_s, dialog_nb\n| sort by start asc\n\n",
+                  "isOptional": true
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsGrid",
+                  "isOptional": true
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics",
+                  "isOptional": true
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "p10-chatbot-ai",
+                  "isOptional": true
+                },
+                {
+                  "name": "Dimensions",
+                  "isOptional": true
+                },
+                {
+                  "name": "LegendOptions",
+                  "isOptional": true
+                },
+                {
+                  "name": "IsQueryContainTimeRange",
+                  "value": false,
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/PartType/LogsDashboardPart",
+              "settings": {
+                "content": {
+                  "GridColumnsWidth": {
+                    "start": "135px",
+                    "end": "142px",
+                    "duration_s": "109px",
+                    "dialog_nb": "104px",
+                    "session_Id": "109px",
+                    "mainDialogUuid": "185px"
+                  },
+                  "Query": "let groupByInterval = 1d;\ncustomEvents\n| where name == 'TN' or name == 'TP'\n| extend mainDialogUuid = tostring(customDimensions['mainDialogUuid'])\n| project mainDialogUuid\n| join kind=rightsemi (\n    customEvents\n    | extend mainDialogUuid = tostring(customDimensions['mainDialogUuid'])\n    | extend text = tostring(customDimensions['text'])\n    | where text != \"\"\n    | extend fromName = tostring(customDimensions['fromName'])\n    | filter fromName == 'You'\n    | project mainDialogUuid, timestamp\n) on mainDialogUuid\n| sort by mainDialogUuid asc, timestamp asc\n| summarize start=min(timestamp), end=max(timestamp), user_text_nb_nb=count() by mainDialogUuid\n| extend duration_s = (end - start) / 1s\n| project mainDialogUuid, start, end, duration_s, user_text_nb_nb\n| sort by start asc\n\n",
+                  "PartTitle": "Durée des dialogues et nombre de textes utilisateur"
+                }
+              }
+            }
+          },
+          "5": {
+            "position": {
+              "x": 0,
+              "y": 8,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "resourceTypeMode",
+                  "isOptional": true
+                },
+                {
+                  "name": "ComponentId",
+                  "isOptional": true
+                },
+                {
+                  "name": "Scope",
+                  "value": {
+                    "resourceIds": [
+                      "/subscriptions/82f2cbcd-fb58-4d87-a682-9782dff74a97/resourceGroups/p10-chatbot-rg/providers/microsoft.insights/components/p10-chatbot-ai"
+                    ]
+                  },
+                  "isOptional": true
+                },
+                {
+                  "name": "PartId",
+                  "value": "1336c9cc-65b2-4568-b213-7a17dcc403b0",
+                  "isOptional": true
+                },
+                {
+                  "name": "Version",
+                  "value": "2.0",
+                  "isOptional": true
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "2021-12-14T14:44:37.000Z/2022-01-11T14:44:37.796Z",
+                  "isOptional": true
+                },
+                {
+                  "name": "DashboardId",
+                  "isOptional": true
+                },
+                {
+                  "name": "DraftRequestParameters",
+                  "isOptional": true
+                },
+                {
+                  "name": "Query",
+                  "value": "let groupByInterval = 1d;\ncustomEvents\n| where name == 'TN' or name == 'TP'\n| extend mainDialogUuid = tostring(customDimensions['mainDialogUuid'])\n| sort by timestamp asc\n| project mainDialogUuid, timestamp, name\n| summarize insatisfaction_nb = countif(name == 'TN'), _satisfaction_nb = countif(name == 'TP'), dialog_nb = count() by bin(timestamp, groupByInterval)\n| extend insatisfaction_rate = toreal(insatisfaction_nb) / toreal(dialog_nb)\n| extend satisfaction_rate = toreal(_satisfaction_nb) / toreal(dialog_nb)\n| project timestamp, _satisfaction_nb, insatisfaction_nb\n| render columnchart with (kind = stacked100, ycolumns=_satisfaction_nb, insatisfaction_nb)\n",
+                  "isOptional": true
+                },
+                {
+                  "name": "ControlType",
+                  "value": "FrameControlChart",
+                  "isOptional": true
+                },
+                {
+                  "name": "SpecificChart",
+                  "value": "PercentageColumn",
+                  "isOptional": true
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics",
+                  "isOptional": true
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "p10-chatbot-ai",
+                  "isOptional": true
+                },
+                {
+                  "name": "Dimensions",
+                  "value": {
+                    "xAxis": {
+                      "name": "timestamp",
+                      "type": "datetime"
+                    },
+                    "yAxis": [
+                      {
+                        "name": "_satisfaction_nb",
+                        "type": "long"
+                      },
+                      {
+                        "name": "insatisfaction_nb",
+                        "type": "long"
+                      }
+                    ],
+                    "splitBy": [],
+                    "aggregation": "Sum"
+                  },
+                  "isOptional": true
+                },
+                {
+                  "name": "LegendOptions",
+                  "value": {
+                    "isEnabled": true,
+                    "position": "Bottom"
+                  },
+                  "isOptional": true
+                },
+                {
+                  "name": "IsQueryContainTimeRange",
+                  "value": false,
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/PartType/LogsDashboardPart",
+              "settings": {
+                "content": {
+                  "PartTitle": "Nombre d'insatisfactions"
+                }
+              }
+            }
+          },
+          "6": {
+            "position": {
+              "x": 6,
+              "y": 8,
+              "colSpan": 12,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "resourceTypeMode",
+                  "isOptional": true
+                },
+                {
+                  "name": "ComponentId",
+                  "isOptional": true
+                },
+                {
+                  "name": "Scope",
+                  "value": {
+                    "resourceIds": [
+                      "/subscriptions/82f2cbcd-fb58-4d87-a682-9782dff74a97/resourceGroups/p10-chatbot-rg/providers/microsoft.insights/components/p10-chatbot-ai"
+                    ]
+                  },
+                  "isOptional": true
+                },
+                {
+                  "name": "PartId",
+                  "value": "7f9a6e24-4164-430c-9515-4053e516e863",
+                  "isOptional": true
+                },
+                {
+                  "name": "Version",
+                  "value": "2.0",
+                  "isOptional": true
+                },
+                {
+                  "name": "TimeRange",
+                  "value": "P1D",
+                  "isOptional": true
+                },
+                {
+                  "name": "DashboardId",
+                  "isOptional": true
+                },
+                {
+                  "name": "DraftRequestParameters",
+                  "isOptional": true
+                },
+                {
+                  "name": "Query",
+                  "value": "customEvents\n| where name == 'TN'\n| extend mainDialogUuid = tostring(customDimensions['mainDialogUuid'])\n| project mainDialogUuid\n| join kind=rightsemi (\n    customEvents\n    | extend mainDialogUuid = tostring(customDimensions['mainDialogUuid'])\n    | extend text = tostring(customDimensions['text'])\n    | where text != \"\"\n    | extend fromName = tostring(customDimensions['fromName'])\n    | project mainDialogUuid, timestamp, fromName, session_Id, text\n) on mainDialogUuid\n| sort by mainDialogUuid asc, timestamp asc\n",
+                  "isOptional": true
+                },
+                {
+                  "name": "ControlType",
+                  "value": "AnalyticsGrid",
+                  "isOptional": true
+                },
+                {
+                  "name": "SpecificChart",
+                  "isOptional": true
+                },
+                {
+                  "name": "PartTitle",
+                  "value": "Analytics",
+                  "isOptional": true
+                },
+                {
+                  "name": "PartSubTitle",
+                  "value": "p10-chatbot-ai",
+                  "isOptional": true
+                },
+                {
+                  "name": "Dimensions",
+                  "isOptional": true
+                },
+                {
+                  "name": "LegendOptions",
+                  "isOptional": true
+                },
+                {
+                  "name": "IsQueryContainTimeRange",
+                  "value": false,
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/Microsoft_OperationsManagementSuite_Workspace/PartType/LogsDashboardPart",
+              "settings": {
+                "content": {
+                  "GridColumnsWidth": {
+                    "text": "481px",
+                    "session_Id": "121px",
+                    "mainDialogUuid": "140px",
+                    "timestamp": "138px",
+                    "fromName": "127px"
+                  },
+                  "Query": "customEvents\n| where name == 'TN'\n| extend mainDialogUuid = tostring(customDimensions['mainDialogUuid'])\n| project mainDialogUuid\n| join kind=rightsemi (\n    customEvents\n    | extend mainDialogUuid = tostring(customDimensions['mainDialogUuid'])\n    | extend text = tostring(customDimensions['text'])\n    | where text != \"\"\n    | extend fromName = tostring(customDimensions['fromName'])\n    | project session_Id, mainDialogUuid, timestamp, fromName, text\n) on mainDialogUuid\n| sort by mainDialogUuid asc, timestamp asc\n\n",
+                  "PartTitle": "Dialogues sources d'insatisfactions",
+                  "IsQueryContainTimeRange": false
+                }
+              }
+            }
+          },
+          "7": {
+            "position": {
+              "x": 0,
+              "y": 12,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "options",
+                  "isOptional": true
+                },
+                {
+                  "name": "sharedTimeRange",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/HubsExtension/PartType/MonitorChartPart",
+              "settings": {
+                "content": {
+                  "options": {
+                    "chart": {
+                      "metrics": [
+                        {
+                          "resourceMetadata": {
+                            "id": "/subscriptions/82f2cbcd-fb58-4d87-a682-9782dff74a97/resourceGroups/p10-chatbot-rg/providers/Microsoft.Web/sites/p10-chatbot-webapp"
+                          },
+                          "name": "Http5xx",
+                          "aggregationType": 1,
+                          "namespace": "microsoft.web/sites",
+                          "metricVisualization": {
+                            "displayName": "Http Server Errors",
+                            "resourceDisplayName": "p10-chatbot-webapp"
+                          }
+                        }
+                      ],
+                      "title": "Nombre d'erreurs http du serveur de l'application web",
+                      "titleKind": 2,
+                      "visualization": {
+                        "chartType": 2,
+                        "legendVisualization": {
+                          "isVisible": true,
+                          "position": 2,
+                          "hideSubtitle": false
+                        },
+                        "axisVisualization": {
+                          "x": {
+                            "isVisible": true,
+                            "axisType": 2
+                          },
+                          "y": {
+                            "isVisible": true,
+                            "axisType": 1
+                          }
+                        },
+                        "disablePinning": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "8": {
+            "position": {
+              "x": 6,
+              "y": 12,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "options",
+                  "isOptional": true
+                },
+                {
+                  "name": "sharedTimeRange",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/HubsExtension/PartType/MonitorChartPart",
+              "settings": {
+                "content": {
+                  "options": {
+                    "chart": {
+                      "metrics": [
+                        {
+                          "resourceMetadata": {
+                            "id": "/subscriptions/82f2cbcd-fb58-4d87-a682-9782dff74a97/resourceGroups/p10-chatbot-rg/providers/Microsoft.Web/sites/p10-chatbot-webapp"
+                          },
+                          "name": "HttpResponseTime",
+                          "aggregationType": 4,
+                          "namespace": "microsoft.web/sites",
+                          "metricVisualization": {
+                            "displayName": "Response Time",
+                            "resourceDisplayName": "p10-chatbot-webapp"
+                          }
+                        }
+                      ],
+                      "title": "Temps de réponse moyen de l'application web",
+                      "titleKind": 2,
+                      "visualization": {
+                        "chartType": 2,
+                        "legendVisualization": {
+                          "isVisible": true,
+                          "position": 2,
+                          "hideSubtitle": false
+                        },
+                        "axisVisualization": {
+                          "x": {
+                            "isVisible": true,
+                            "axisType": 2
+                          },
+                          "y": {
+                            "isVisible": true,
+                            "axisType": 1
+                          }
+                        },
+                        "disablePinning": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "9": {
+            "position": {
+              "x": 12,
+              "y": 12,
+              "colSpan": 6,
+              "rowSpan": 4
+            },
+            "metadata": {
+              "inputs": [
+                {
+                  "name": "options",
+                  "isOptional": true
+                },
+                {
+                  "name": "sharedTimeRange",
+                  "isOptional": true
+                }
+              ],
+              "type": "Extension/HubsExtension/PartType/MonitorChartPart",
+              "settings": {
+                "content": {
+                  "options": {
+                    "chart": {
+                      "metrics": [
+                        {
+                          "resourceMetadata": {
+                            "id": "/subscriptions/82f2cbcd-fb58-4d87-a682-9782dff74a97/resourceGroups/p10-luis-rg/providers/Microsoft.CognitiveServices/accounts/p10-luis-pred"
+                          },
+                          "name": "LUISTextRequests",
+                          "aggregationType": 1,
+                          "namespace": "microsoft.cognitiveservices/accounts",
+                          "metricVisualization": {
+                            "displayName": "LUIS Text Requests",
+                            "resourceDisplayName": "p10-luis-pred"
+                          }
+                        }
+                      ],
+                      "title": "Nombre de requêtes LUIS",
+                      "titleKind": 2,
+                      "visualization": {
+                        "chartType": 2,
+                        "legendVisualization": {
+                          "isVisible": true,
+                          "position": 2,
+                          "hideSubtitle": false
+                        },
+                        "axisVisualization": {
+                          "x": {
+                            "isVisible": true,
+                            "axisType": 2
+                          },
+                          "y": {
+                            "isVisible": true,
+                            "axisType": 1
+                          }
+                        },
+                        "disablePinning": true
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "metadata": {
+      "model": {
+        "timeRange": {
+          "value": {
+            "relative": {
+              "duration": 24,
+              "timeUnit": 1
+            }
+          },
+          "type": "MsPortalFx.Composition.Configuration.ValueTypes.TimeRange"
+        },
+        "filterLocale": {
+          "value": "fr-fr"
+        },
+        "filters": {
+          "value": {
+            "MsPortalFx_TimeRange": {
+              "model": {
+                "format": "utc",
+                "granularity": "auto",
+                "relative": "7d"
+              },
+              "displayCache": {
+                "name": "Heure UTC",
+                "value": "7 derniers jours"
+              },
+              "filteredPartIds": [
+                "StartboardPart-LogsDashboardPart-f92601dd-a036-4779-9393-aad564666072",
+                "StartboardPart-LogsDashboardPart-96fe03fc-7dfc-46ed-98b8-2a48b94310c3",
+                "StartboardPart-LogsDashboardPart-96fe03fc-7dfc-46ed-98b8-2a48b94310fe",
+                "StartboardPart-LogsDashboardPart-96fe03fc-7dfc-46ed-98b8-2a48b9431152",
+                "StartboardPart-LogsDashboardPart-96fe03fc-7dfc-46ed-98b8-2a48b9431075",
+                "StartboardPart-MonitorChartPart-64ef00a1-7e2d-435b-b0e7-fb84a60e105a",
+                "StartboardPart-MonitorChartPart-e56653b1-4566-4dac-b752-87597842c1ce",
+                "StartboardPart-MonitorChartPart-31bdd43c-7c0d-4bae-8b63-580a173820d4",
+                "StartboardPart-LogsDashboardPart-64ef00a1-7e2d-435b-b0e7-fb84a60e11b4",
+                "StartboardPart-LogsDashboardPart-64ef00a1-7e2d-435b-b0e7-fb84a60e121d"
+              ]
+            }
+          }
+        }
+      }
+    }
+  },
+  "name": "p10-chatbot-dashboard",
+  "type": "Microsoft.Portal/dashboards",
+  "location": "INSERT LOCATION",
+  "tags": {
+    "hidden-title": "p10-chatbot-dashboard"
+  },
+  "apiVersion": "2015-08-01-preview"
+}
