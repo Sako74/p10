@@ -147,6 +147,10 @@ cd P10_05_alert/
 
 Dans Azure, aller sur la ressource `p10-chatbot-ai`. Aller dans la section `Overview/Application Dashboard`. Cliquer sur `Nouveau tableau de bord/Charger` et charger le fichier `P10_06_dashboard/p10-chatbot-dashboard.json`.
 
+<div align="center">
+  <img src="./P10_01_notebooks/data/img/dashboard.png" alt="Dashboard de suivi en production"/>
+</div>
+<p align="center">Dashboard de suivi en production</p>
 
 # Déployer le MVP
 
